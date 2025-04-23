@@ -1,0 +1,134 @@
+.hero {
+  background-image: url("/background-hero.webp");
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+  padding: 300px 20px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    background-position: 10% center;
+  }
+}
+
+.transparent-menubar {
+  padding: 0px !important;
+  border-radius: 0;
+}
+
+h1 {
+  font-size: 1.5em;
+}
+
+footer {
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+/* PRESENTACION */
+.presentation-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  background-color: #f9f9f9;
+}
+
+.bgGray {
+  background-color: #f9f9f9;
+}
+
+.presentation-card {
+  flex: 1 1 300px;
+  max-width: 500px;
+}
+
+.custom-card {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 2rem;
+  background-color: #ffffff;
+}
+
+.custom-panel {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 2rem;
+  background-color: #ffffff;
+}
+
+.custom-button {
+  border-color: #f4b400;
+  color: #f4b400;
+}
+
+.custom-button:hover {
+  background-color: #f4b400;
+  border-color: #f4b400;
+  color: #ffffff;
+}
+
+.presentation-divider {
+  display: flex;
+  align-items: center;
+}
+
+.custom-divider {
+  border-left: 2px solid #f4b400;
+  height: 100%;
+}
+
+.custom-divider-horizontal {
+  border-top: 2px solid #f4b400;
+}
+
+.custom-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.custom-avatar {
+  border: 2px solid #f4b400;
+}
+
+.custom-panel-title {
+  margin: 0;
+  color: #333;
+}
+
+.width-input {
+  width: 285px;
+}
+
+.height-to-hero {
+  height: 700px !important;
+}
+
+.image-hero {
+  object-fit: cover;
+  object-position: 40% top;
+}
+
+.tienda-card {
+  height: 433px;
+}
+
+.h-image-book {
+  height: 170px;
+  object-fit: cover;
+  object-position: 40% top;
+}
+
+.imageDonation {
+  width: 90px;
+  margin-right: 20px;
+}
+
+.imageDonationPaypal {
+  width: 130px;
+  margin-left: 20px;
+}

@@ -1,16 +1,18 @@
-/* eslint-disable @next/next/no-img-element */
-import React from "react";
+"use client";
+import { useRequireAuth } from "@/context/AuthContext";
 
 const Page = () => {
+  // Solo permitir acceso a administradores
+  const { user } = useRequireAuth(["ADMIN"]);
+
   return (
     <div>
       <h2 className="text-900 font-bold text-5xl mb-3 text-center">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+        Gestión de Usuarios
       </h2>
       <p className="text-900 text-xl mb-3 text-center font-bold">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+        Bienvenido, {user?.email}
       </p>
-
     </div>
   );
 };

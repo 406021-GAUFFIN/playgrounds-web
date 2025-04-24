@@ -1,8 +1,24 @@
+"use client";
 import Header from "@/components/common/Header";
 import "./styles/theme.css";
 import "./globals.css";
 import { PrimeReactProvider } from "primereact/api";
-import Footer from "@/components/common/Footer";
+import { AuthProvider } from "@/context/AuthContext";
+import { usePathname } from "next/navigation";
+import { publicRoutes } from "@/const/publicRoutes.const";
+
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = publicRoutes.includes(pathname);
+
+  return (
+    <div className="min-h-screen">
+      {!isLoginPage && <Header />}
+      {children}
+      {/* {!isLoginPage && <Footer />} */}
+    </div>
+  );
+}
 
 export default function RootLayout({
   children,
@@ -12,15 +28,14 @@ export default function RootLayout({
   const config = {
     ripple: true,
   };
+
   return (
     <html lang="en">
-      <body className="m-0 p-0 ">
+      <body className="m-0 p-0">
         <PrimeReactProvider value={config}>
-          <div className="min-h-screen">
-            <Header />
-            {children}
-            <Footer />
-          </div>
+          <AuthProvider>
+            <LayoutContent>{children}</LayoutContent>
+          </AuthProvider>
         </PrimeReactProvider>
       </body>
     </html>

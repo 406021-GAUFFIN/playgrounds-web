@@ -1,28 +1,142 @@
 "use client";
 import { Menubar } from "primereact/menubar";
-import React from "react";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "primereact/button";
+import { Sidebar } from "primereact/sidebar";
+import { Menu } from "primereact/menu";
+import { MenuItem } from "primereact/menuitem";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Header = () => {
-  const navItems = [
+  const { logout, user } = useAuth();
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const router = useRouter();
+
+  const handleNavigation = (path: string) => {
+    setSidebarVisible(false);
+    router.push(path);
+  };
+
+  // Items base que todos los usuarios pueden ver
+  const baseItems = [
+    {
+      template: () => {
+        return (
+          <div className="flex flex-column gap-2 p-4">
+            <div className="flex align-items-center gap-2">
+              <Image
+                src="/logo-medium.webp"
+                alt="Logo Playgrounds"
+                width={40}
+                height={40}
+                priority
+                className="rounded-full"
+              />
+              <span className="font-bold text-xl">Playgrounds</span>
+            </div>
+            <div className="flex flex-column gap-2">
+              <hr className="border-top-1 border-none surface-border my-3" />
+            </div>
+          </div>
+        );
+      },
+    },
     {
       label: "Inicio",
       icon: "pi pi-fw pi-home",
-      command: () => (window.location.href = "/"),
+      command: () => handleNavigation("/"),
     },
     {
       label: "Perfil",
       icon: "pi pi-user",
-      command: () => (window.location.href = "/profile"),
-    },
-    {
-      label: "Usuarios",
-      icon: "pi pi-user-edit",
-      command: () => (window.location.href = "/users"),
+      command: () => handleNavigation("/profile"),
     },
   ];
 
-  const end = <h1 style={{ color: "gray", marginRight: 28 }}>Playgrounds</h1>;
-  return <Menubar model={navItems} className="" end={end} />;
+  // Items específicos para administradores
+  const adminItems = [
+    {
+      label: "Usuarios",
+      icon: "pi pi-user-edit",
+      command: () => handleNavigation("/users"),
+    },
+  ];
+
+  const footerItem = {
+    template: () => {
+      return (
+        <div className="flex flex-column gap-2 p-4 mt-auto">
+          <hr className="border-top-1 border-none surface-border my-3" />
+          <div className="text-sm text-500 mb-2">{user?.email}</div>
+          <Button
+            label="Cerrar Sesión"
+            icon="pi pi-sign-out"
+            severity="danger"
+            onClick={() => {
+              setSidebarVisible(false);
+              logout();
+            }}
+            className="p-button-text w-full"
+          />
+        </div>
+      );
+    },
+  };
+
+  const navItems = [
+    ...baseItems,
+    ...(user?.role === "ADMIN" ? adminItems : []),
+    footerItem,
+  ];
+
+  const headerItems: MenuItem[] = [];
+
+  const start = (
+    <div className="flex align-items-center gap-2">
+      <Button
+        icon="pi pi-bars"
+        onClick={() => setSidebarVisible(true)}
+        text
+        severity="secondary"
+        className="mr-2"
+      />
+      <Image
+        src="/logo-small.webp"
+        alt="Logo Playgrounds"
+        width={32}
+        height={32}
+        priority
+        className="rounded-full"
+      />
+    </div>
+  );
+
+  const end = (
+    <div className="flex align-items-center gap-2">
+      <h1 style={{ color: "gray", marginRight: 28 }}>Playgrounds</h1>
+    </div>
+  );
+
+  return (
+    <>
+      <Menubar
+        model={headerItems}
+        className="border-noround"
+        start={start}
+        end={end}
+      />
+
+      <Sidebar
+        visible={sidebarVisible}
+        onHide={() => setSidebarVisible(false)}
+        className="w-full md:w-20rem"
+      >
+        <Menu model={navItems} className="w-full border-none" />
+      </Sidebar>
+    </>
+  );
 };
 
 export default Header;

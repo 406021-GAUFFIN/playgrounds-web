@@ -7,12 +7,8 @@ const Hero = () => {
     <div className="grid grid-nogutter surface-0 text-800 height-to-hero">
       <div className="col-12 md:col-5 xl:col-4 p-6 text-center md:text-left flex align-items-center height-to-hero">
         <section>
-          <span className="block text-6xl font-bold mb-1">
-            Hero
-          </span>
-          <div className="text-6xl text-primary font-bold mb-3">
-            Hero
-          </div>
+          <span className="block text-6xl font-bold mb-1">Hero</span>
+          <div className="text-6xl text-primary font-bold mb-3">Hero</div>
           <p className="mt-0 mb-4 text-700 line-height-3">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua.

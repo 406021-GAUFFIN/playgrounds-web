@@ -1,11 +1,11 @@
 "use client";
 import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const [code, setCode] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -119,5 +119,22 @@ export default function VerifyEmailPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex align-items-center justify-content-center min-h-screen">
+          <div className="surface-card p-4 shadow-2 border-round w-full lg:w-4 text-center">
+            <i className="pi pi-spin pi-spinner text-primary-500 text-5xl"></i>
+            <p className="mt-3">Cargando...</p>
+          </div>
+        </div>
+      }
+    >
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

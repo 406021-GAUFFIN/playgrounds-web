@@ -183,6 +183,20 @@ const Page = () => {
                 }
                 className="w-full"
                 inputClassName="w-full"
+                pt={{
+                  iconField: {
+                    root: {
+                      style: { width: "100%" },
+                    },
+                  },
+                  input: {
+                    style: { width: "100%" },
+                  },
+                  root: {
+                    style: { width: "100%" },
+                  },
+                }}
+                inputStyle={{ width: "100%" }}
                 feedback={false}
                 toggleMask
               />

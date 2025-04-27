@@ -8,11 +8,20 @@ import { MenuItem } from "primereact/menuitem";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Avatar } from "primereact/avatar";
 
 const Header = () => {
   const { logout, user } = useAuth();
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const router = useRouter();
+
+  const getInitials = (name: string) => {
+    const names = name?.split(" ") || [];
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return name?.[0]?.toUpperCase() || "U";
+  };
 
   const handleNavigation = (path: string) => {
     setSidebarVisible(false);
@@ -69,11 +78,23 @@ const Header = () => {
       return (
         <div className="flex flex-column gap-2 p-4 mt-auto">
           <hr className="border-top-1 border-none surface-border my-3" />
-          <div className="text-sm text-500 mb-2">{user?.email}</div>
+          <div className="flex items-center gap-2 ">
+            <Avatar
+              label={getInitials(user?.name || "")}
+              size="large"
+              style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
+              shape="circle"
+            />
+            <div className="flex flex-column">
+              <span className="font-semibold text-xl">{user?.name}</span>
+              <span className="text-sm text-500">{user?.email}</span>
+            </div>
+          </div>
           <Button
             label="Cerrar Sesión"
             icon="pi pi-sign-out"
             severity="danger"
+            outlined
             onClick={() => {
               setSidebarVisible(false);
               logout();
@@ -102,20 +123,36 @@ const Header = () => {
         severity="secondary"
         className="mr-2"
       />
-      <Image
-        src="/logo-small.webp"
-        alt="Logo Playgrounds"
-        width={32}
-        height={32}
-        priority
-        className="rounded-full"
-      />
+      <div
+        className="flex align-items-center gap-2 cursor-pointer"
+        onClick={() => handleNavigation("/")}
+      >
+        <Image
+          src="/logo-small.webp"
+          alt="Logo Playgrounds"
+          width={32}
+          height={32}
+          priority
+          className="rounded-full"
+        />
+        <span className="font-semibold text-xl">Playgrounds</span>
+      </div>
     </div>
   );
 
   const end = (
     <div className="flex align-items-center gap-2">
-      <h1 style={{ color: "gray", marginRight: 28 }}>Playgrounds</h1>
+      <div
+        className="cursor-pointer"
+        onClick={() => handleNavigation("/profile")}
+      >
+        <Avatar
+          label={getInitials(user?.name || "")}
+          size="large"
+          style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
+          shape="circle"
+        />
+      </div>
     </div>
   );
 

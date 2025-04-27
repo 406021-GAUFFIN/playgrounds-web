@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 
 interface User {
   email: string;
+  name: string;
   id: number;
   role: "ADMIN" | "SPORTSMAN";
 }
@@ -52,7 +53,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       );
 
       if (!response.ok) {
-        throw new Error("Error en el inicio de sesión");
+        const error = new Error("Error en el inicio de sesión") as any;
+        error.status = response.status;
+        throw error;
       }
 
       const data = await response.json();

@@ -159,7 +159,7 @@ const Page = () => {
           />
         </div>
 
-        <div className="flex-8 flex justify-end">
+        <div className="ml-auto">
           <Button
             label="Nuevo Usuario"
             icon="pi pi-plus"

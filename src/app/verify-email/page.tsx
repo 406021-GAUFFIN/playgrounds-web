@@ -1,13 +1,13 @@
 "use client";
 import { Button } from "primereact/button";
-import { InputNumber } from "primereact/inputnumber";
 import { useState, Suspense, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Toast } from "primereact/toast";
+import { InputOtp, InputOtpChangeEvent } from "primereact/inputotp";
 
 function VerifyEmailContent() {
-  const [code, setCode] = useState<number | null>(null);
+  const [code, setCode] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(false);
   const router = useRouter();
@@ -28,7 +28,7 @@ function VerifyEmailContent() {
           },
           body: JSON.stringify({
             email,
-            code: verificationCode.padStart(6, "0"),
+            code: verificationCode,
           }),
         }
       );
@@ -67,8 +67,8 @@ function VerifyEmailContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code) return;
-    await verifyEmail(code.toString());
+    if (!code || code.length !== 6) return;
+    await verifyEmail(code);
   };
 
   if (verified) {
@@ -108,7 +108,7 @@ function VerifyEmailContent() {
       <div className="flex align-items-center justify-content-center min-h-screen">
         <div className="surface-card p-4 shadow-2 border-round w-full lg:w-4">
           <div className="mb-5 flex flex-column align-items-center">
-          <div className="flex align-items-center gap-2 mb-2">
+            <div className="flex align-items-center gap-2 mb-2">
               <Image
                 src="/logo-medium.webp"
                 alt="Logo Playgrounds"
@@ -130,25 +130,33 @@ function VerifyEmailContent() {
           </div>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="code" className="block text-900 font-medium mb-2">
+              <label
+                htmlFor="code"
+                className="block text-900 font-medium mb-2 text-center"
+              >
                 Código de verificación
               </label>
-              <InputNumber
-                id="code"
-                value={code}
-                onValueChange={(e) => setCode(e.value || null)}
-                useGrouping={false}
-                className="w-full"
-                maxLength={6}
-                required
-              />
+              <div className="flex justify-content-center">
+                <InputOtp
+                  value={code}
+                  onChange={(e: InputOtpChangeEvent) =>
+                    setCode(e.value?.toString() || "")
+                  }
+                  length={6}
+                  className="gap-2"
+                  pt={{
+                    input: { className: "w-3rem text-center" },
+                  }}
+                  required
+                />
+              </div>
             </div>
             <Button
               label="Verificar"
               type="submit"
               className="w-full"
               loading={loading}
-              disabled={!code || code.toString().length !== 6}
+              disabled={!code || code.length !== 6}
             />
           </form>
         </div>

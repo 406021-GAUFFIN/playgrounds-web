@@ -2,6 +2,7 @@
 import Header from "@/components/common/Header";
 import "./styles/theme.css";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import { PrimeReactProvider } from "primereact/api";
 import { AuthProvider } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";

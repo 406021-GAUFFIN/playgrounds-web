@@ -71,6 +71,11 @@ const Header = () => {
       icon: "pi pi-user-edit",
       command: () => handleNavigation("/users"),
     },
+    {
+      label: "Espacios",
+      icon: "pi pi-pen-to-square",
+      command: () => handleNavigation("/spaces"),
+    },
   ];
 
   const footerItem = {

@@ -38,12 +38,6 @@ const Page = () => {
   // Modal de creación
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const roles = [
-    { label: "Todos", value: "" },
-    { label: "Admin", value: "ADMIN" },
-    { label: "Deportista", value: "SPORTSMAN" },
-  ];
-
   const loadSpaces = async () => {
     setLoading(true);
     try {
@@ -105,12 +99,10 @@ const Page = () => {
     );
   };
 
-
-
   return (
     <div className="w-full p-4">
       <h2 className="text-900 font-bold text-5xl mb-3 text-center">
-        Gestión de Usuarios
+        Gestión de Espacios
       </h2>
 
       <div className="flex flex-wrap gap-3 mb-4 items-center">
@@ -139,7 +131,7 @@ const Page = () => {
 
         <div className="ml-auto">
           <Button
-            label="Nuevo Usuario"
+            label="Nuevo Espacio"
             icon="pi pi-plus"
             onClick={() => setShowCreateModal(true)}
           />
@@ -159,10 +151,36 @@ const Page = () => {
         loading={loading}
         className="p-datatable-sm"
       >
-        <Column field="name" header="Nombre" />
-        <Column field="email" header="Email" />
-
-        <Column field="role" header="Rol" />
+        <Column field="name" header="Nombre" sortable />
+        <Column field="address" header="Dirección" sortable />
+        <Column
+          field="isActive"
+          header="Estado"
+          body={(rowData: Space) => (
+            <span
+              className={`font-bold ${
+                rowData.isActive ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {rowData.isActive ? "Activo" : "Inactivo"}
+            </span>
+          )}
+          sortable
+        />
+        <Column
+          field="isAccessible"
+          header="Accesible"
+          body={(rowData: Space) => (
+            <i
+              className={`pi ${
+                rowData.isAccessible
+                  ? "pi-check-circle text-green-500"
+                  : "pi-times-circle text-red-500"
+              }`}
+            ></i>
+          )}
+          sortable
+        />
         <Column
           body={actionBodyTemplate}
           exportable={false}

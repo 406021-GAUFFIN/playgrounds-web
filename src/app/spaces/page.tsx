@@ -13,18 +13,13 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { EditUserModal } from "@/components/users/EditUserModal";
 import { CreateUserModal } from "@/components/users/CreateUserModal";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  emailValidatedAt: string | null;
-  role: string;
-}
+import { Space } from "./_types";
+import { EditSpaceModal } from "./_components/EditSpaceModal";
+import { CreateSpaceModal } from "./_components/CreateSpaceModal";
 
 const Page = () => {
   const { user } = useRequireAuth(["ADMIN"]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [lazyState, setLazyState] = useState({
@@ -33,19 +28,13 @@ const Page = () => {
     page: 0,
   });
 
+
   const [nameFilter, setNameFilter] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedSpaceId, setSelectedSpaceId] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const roles = [
-    { label: "Todos", value: "" },
-    { label: "Admin", value: "ADMIN" },
-    { label: "Deportista", value: "SPORTSMAN" },
-  ];
-
-  const loadUsers = async () => {
+  const loadSpaces = async () => {
     setLoading(true);
     try {
       const queryParams = new URLSearchParams({
@@ -54,10 +43,9 @@ const Page = () => {
       });
 
       if (nameFilter) queryParams.append("name", nameFilter);
-      if (roleFilter) queryParams.append("role", roleFilter);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users?${queryParams}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/spaces?${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${
@@ -69,8 +57,8 @@ const Page = () => {
 
       if (!response.ok) throw new Error("Error al cargar usuarios");
 
-      const data: PaginatedResponse<User> = await response.json();
-      setUsers(data.data);
+      const data: PaginatedResponse<Space> = await response.json();
+      setSpaces(data.data);
       setTotalRecords(data.total);
     } catch (error) {
       console.error("Error:", error);
@@ -80,8 +68,8 @@ const Page = () => {
   };
 
   useEffect(() => {
-    loadUsers();
-  }, [lazyState, nameFilter, roleFilter]);
+    loadSpaces();
+  }, [lazyState, nameFilter]);
 
   const onPage = (event: any) => {
     setLazyState({
@@ -92,7 +80,7 @@ const Page = () => {
     });
   };
 
-  const actionBodyTemplate = (rowData: User) => {
+  const actionBodyTemplate = (rowData: Space) => {
     return (
       <Button
         icon="pi pi-pencil"
@@ -100,23 +88,17 @@ const Page = () => {
         outlined
         className="mr-2"
         onClick={() => {
-          setSelectedUserId(rowData.id);
+          setSelectedSpaceId(rowData.id);
           setShowEditModal(true);
         }}
       />
     );
   };
 
-  const dateBodyTemplate = (rowData: User) => {
-    return rowData.emailValidatedAt
-      ? formatDate(rowData.emailValidatedAt)
-      : "No validado";
-  };
-
   return (
     <div className="w-full p-4">
       <h2 className="text-900 font-bold text-5xl mb-3 text-center">
-        Gestión de Usuarios
+        Gestión de Espacios
       </h2>
 
       <div className="flex flex-wrap gap-3 mb-4 items-center">
@@ -128,7 +110,6 @@ const Page = () => {
           aria-label="Limpiar filtros"
           onClick={() => {
             setNameFilter("");
-            setRoleFilter("");
           }}
         />
 
@@ -144,19 +125,9 @@ const Page = () => {
           </IconField>
         </div>
 
-        <div className="w-full md:w-auto">
-          <Dropdown
-            options={roles}
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.value)}
-            placeholder="Seleccionar rol"
-            className="w-full"
-          />
-        </div>
-
         <div className="ml-auto">
           <Button
-            label="Nuevo Usuario"
+            label="Nuevo Espacio"
             icon="pi pi-plus"
             onClick={() => setShowCreateModal(true)}
           />
@@ -164,7 +135,7 @@ const Page = () => {
       </div>
 
       <DataTable
-        value={users}
+        value={spaces}
         lazy
         dataKey="id"
         paginator
@@ -176,14 +147,36 @@ const Page = () => {
         loading={loading}
         className="p-datatable-sm"
       >
-        <Column field="name" header="Nombre" />
-        <Column field="email" header="Email" />
+        <Column field="name" header="Nombre" sortable />
+        <Column field="address" header="Dirección" sortable />
         <Column
-          field="emailValidatedAt"
-          header="Fecha Validación"
-          body={dateBodyTemplate}
+          field="isActive"
+          header="Estado"
+          body={(rowData: Space) => (
+            <span
+              className={`font-bold ${
+                rowData.isActive ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {rowData.isActive ? "Activo" : "Inactivo"}
+            </span>
+          )}
+          sortable
         />
-        <Column field="role" header="Rol" />
+        <Column
+          field="isAccessible"
+          header="Accesible"
+          body={(rowData: Space) => (
+            <i
+              className={`pi ${
+                rowData.isAccessible
+                  ? "pi-check-circle text-green-500"
+                  : "pi-times-circle text-red-500"
+              }`}
+            ></i>
+          )}
+          sortable
+        />
         <Column
           body={actionBodyTemplate}
           exportable={false}
@@ -191,20 +184,20 @@ const Page = () => {
         />
       </DataTable>
 
-      <EditUserModal
+      <EditSpaceModal
         visible={showEditModal}
         onHide={() => {
           setShowEditModal(false);
-          setSelectedUserId(null);
+          setSelectedSpaceId(null);
         }}
-        userId={selectedUserId}
-        onSuccess={loadUsers}
+        spaceId={selectedSpaceId}
+        onSuccess={loadSpaces}
       />
 
-      <CreateUserModal
+      <CreateSpaceModal
         visible={showCreateModal}
         onHide={() => setShowCreateModal(false)}
-        onSuccess={loadUsers}
+        onSuccess={loadSpaces}
       />
     </div>
   );

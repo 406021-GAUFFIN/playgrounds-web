@@ -257,8 +257,8 @@ export const CreateSpaceModal = ({
         <div className="field mb-4">
           <label className="font-bold">Ubicación</label>
           <MapComponent
-            initialLat={space.latitude || -34.6037}
-            initialLng={space.longitude || -58.3816}
+            initialLat={space.latitude || -31.420103}
+            initialLng={space.longitude || -64.188764}
             onLocationSelect={(lat, lng) => {
               setSpace((prev) => ({
                 ...prev,

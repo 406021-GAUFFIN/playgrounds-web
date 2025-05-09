@@ -28,14 +28,10 @@ const Page = () => {
     page: 0,
   });
 
-  // Filtros
-  const [nameFilter, setNameFilter] = useState("");
 
-  // Modal de edición
+  const [nameFilter, setNameFilter] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSpaceId, setSelectedSpaceId] = useState<number | null>(null);
-
-  // Modal de creación
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const loadSpaces = async () => {

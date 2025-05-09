@@ -1,9 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import L, { Icon } from "leaflet";
 
-// Fix para los íconos de Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -15,9 +14,9 @@ L.Icon.Default.mergeOptions({
 });
 
 interface MapComponentProps {
-  initialLat?: number;
-  initialLng?: number;
-  onLocationSelect?: (lat: number, lng: number) => void;
+  initialLat: number;
+  initialLng: number;
+  onLocationSelect: (lat: number, lng: number) => void;
   height?: string;
 }
 
@@ -26,24 +25,49 @@ const LocationMarker = ({
 }: {
   onLocationSelect: (lat: number, lng: number) => void;
 }) => {
-  const [position, setPosition] = useState<L.LatLng | null>(null);
+  const [position, setPosition] = useState<[number, number] | null>(null);
 
-  useMapEvents({
+  const map = useMapEvents({
     click(e) {
-      setPosition(e.latlng);
+      setPosition([e.latlng.lat, e.latlng.lng]);
       onLocationSelect(e.latlng.lat, e.latlng.lng);
     },
   });
 
-  return position === null ? null : <Marker position={position} />;
+  useEffect(() => {
+    if (map) {
+      const center = map.getCenter();
+      setPosition([center.lat, center.lng]);
+    }
+  }, [map]);
+
+  return position ? (
+    <Marker
+      position={position}
+      icon={
+        new Icon({
+          iconUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+          iconRetinaUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+          shadowUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41],
+        })
+      }
+    />
+  ) : null;
 };
 
-const MapComponent: React.FC<MapComponentProps> = ({
-  initialLat = -31.420101,
-  initialLng = -64.188907,
-  onLocationSelect = () => {},
+const MapComponent = ({
+  initialLat,
+  initialLng,
+  onLocationSelect,
   height = "300px",
-}) => {
+}: MapComponentProps) => {
   const ZOOM_LEVEL = 13;
   const mapRef = useRef<L.Map>(null);
 

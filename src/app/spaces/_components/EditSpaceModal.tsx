@@ -10,6 +10,7 @@ import { Button } from "primereact/button";
 import { formatDate } from "@/utils/dateUtils";
 import { Space, Sport } from "../_types";
 import MapComponent from "./MapComponent";
+import Image from "next/image";
 
 interface EditSpaceModalProps {
   visible: boolean;
@@ -106,7 +107,8 @@ export const EditSpaceModal = ({
 
     setLoading(true);
     try {
-      const { sports, id, createdAt, updatedAt, ...spaceWithoutIdAndSports } = space;
+      const { sports, id, createdAt, updatedAt, ...spaceWithoutIdAndSports } =
+        space;
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/spaces/${spaceId}`,
         {
@@ -159,16 +161,13 @@ export const EditSpaceModal = ({
 
     if (!sport) return null;
 
+
     return (
       <div className="flex align-items-center gap-2">
         {sport.pictogram && (
-          <img
-            src={sport.pictogram}
-            alt={sport.name || "Sport icon"}
+          <div
             className="w-6 h-6"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
+            dangerouslySetInnerHTML={{ __html: sport.pictogram }}
           />
         )}
         <span>{sport.name || "Sin nombre"}</span>

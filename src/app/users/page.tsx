@@ -33,15 +33,10 @@ const Page = () => {
     page: 0,
   });
 
-  // Filtros
   const [nameFilter, setNameFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
-
-  // Modal de edición
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-
-  // Modal de creación
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const roles = [

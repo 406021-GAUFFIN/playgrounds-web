@@ -13,9 +13,10 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { EditUserModal } from "@/components/users/EditUserModal";
 import { CreateUserModal } from "@/components/users/CreateUserModal";
-import { Space } from "./_types";
+import { Space, Sport } from "./_types";
 import { EditSpaceModal } from "./_components/EditSpaceModal";
 import { CreateSpaceModal } from "./_components/CreateSpaceModal";
+import { spaceService } from "../services/spaceService";
 
 const Page = () => {
   const { user } = useRequireAuth(["ADMIN"]);
@@ -28,7 +29,6 @@ const Page = () => {
     page: 0,
   });
 
-
   const [nameFilter, setNameFilter] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSpaceId, setSelectedSpaceId] = useState<number | null>(null);
@@ -37,27 +37,11 @@ const Page = () => {
   const loadSpaces = async () => {
     setLoading(true);
     try {
-      const queryParams = new URLSearchParams({
-        page: lazyState.page.toString(),
-        pageSize: lazyState.rows.toString(),
+      const data = await spaceService.getSpaces({
+        page: lazyState.page,
+        pageSize: lazyState.rows,
+        name: nameFilter,
       });
-
-      if (nameFilter) queryParams.append("name", nameFilter);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/spaces?${queryParams}`,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              document.cookie.split("token=")[1].split(";")[0]
-            }`,
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error("Error al cargar usuarios");
-
-      const data: PaginatedResponse<Space> = await response.json();
       setSpaces(data.data);
       setTotalRecords(data.total);
     } catch (error) {
@@ -75,18 +59,67 @@ const Page = () => {
     setLazyState({
       ...lazyState,
       first: event.first,
-      page: event.page,
       rows: event.rows,
+      page: event.page,
     });
   };
 
-  const actionBodyTemplate = (rowData: Space) => {
+  const sportTemplate = (rowData: Space) => {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {rowData.sports && rowData.sports.length > 0 ? (
+          rowData.sports.map((sport: Sport) => (
+            <div
+              key={sport.id}
+              className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full"
+            >
+              <div
+                className="w-6 h-6"
+                dangerouslySetInnerHTML={{ __html: sport.pictogram }}
+              />
+              <span>{sport.name}</span>
+            </div>
+          ))
+        ) : (
+          <div>Sin deportes</div>
+        )}
+      </div>
+    );
+  };
+
+  const statusTemplate = (rowData: Space) => {
+    return (
+      <span
+        className={`px-2 py-1 rounded-full text-sm ${
+          rowData.isActive
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+        }`}
+      >
+        {rowData.isActive ? "Activo" : "Inactivo"}
+      </span>
+    );
+  };
+
+  const accessibleTemplate = (rowData: Space) => {
+    return (
+      <span
+        className={`px-2 py-1 rounded-full text-sm ${
+          rowData.isAccessible
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+        }`}
+      >
+        {rowData.isAccessible ? "Sí" : "No"}
+      </span>
+    );
+  };
+
+  const actionsTemplate = (rowData: Space) => {
     return (
       <Button
         icon="pi pi-pencil"
-        rounded
-        outlined
-        className="mr-2"
+        className="p-button-rounded p-button-text"
         onClick={() => {
           setSelectedSpaceId(rowData.id);
           setShowEditModal(true);
@@ -146,42 +179,18 @@ const Page = () => {
         onPage={onPage}
         loading={loading}
         className="p-datatable-sm"
+        emptyMessage="No se encontraron espacios"
       >
-        <Column field="name" header="Nombre" sortable />
-        <Column field="address" header="Dirección" sortable />
-        <Column
-          field="isActive"
-          header="Estado"
-          body={(rowData: Space) => (
-            <span
-              className={`font-bold ${
-                rowData.isActive ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {rowData.isActive ? "Activo" : "Inactivo"}
-            </span>
-          )}
-          sortable
-        />
+        <Column field="name" header="Nombre" />
+        <Column field="address" header="Dirección" />
+        <Column field="sports" header="Deportes" body={sportTemplate} />
+        <Column field="isActive" header="Estado" body={statusTemplate} />
         <Column
           field="isAccessible"
           header="Accesible"
-          body={(rowData: Space) => (
-            <i
-              className={`pi ${
-                rowData.isAccessible
-                  ? "pi-check-circle text-green-500"
-                  : "pi-times-circle text-red-500"
-              }`}
-            ></i>
-          )}
-          sortable
+          body={accessibleTemplate}
         />
-        <Column
-          body={actionBodyTemplate}
-          exportable={false}
-          style={{ width: "8rem" }}
-        />
+        <Column body={actionsTemplate} style={{ width: "4rem" }} />
       </DataTable>
 
       <EditSpaceModal

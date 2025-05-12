@@ -1,11 +1,5 @@
+import { PaginatedResponse } from "../../types/pagination";
 import { Space } from "../_types";
-
-interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
 
 interface GetSpacesParams {
   page?: number;
@@ -48,6 +42,22 @@ export const spaceService = {
 
     if (!response.ok) throw new Error("Error al cargar espacios");
 
+    return response.json();
+  },
+
+  async getSpaceById(id: string): Promise<Space> {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/spaces/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${
+            document.cookie.split("token=")[1].split(";")[0]
+          }`,
+        },
+      }
+    );
+
+    if (!response.ok) throw new Error("Error al cargar el espacio");
     return response.json();
   },
 };

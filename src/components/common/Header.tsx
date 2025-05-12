@@ -62,6 +62,11 @@ const Header = () => {
       icon: "pi pi-user",
       command: () => handleNavigation("/profile"),
     },
+    {
+      label: "Eventos",
+      icon: "pi pi-calendar",
+      command: () => handleNavigation("/events"),
+    },
   ];
 
   // Items específicos para administradores

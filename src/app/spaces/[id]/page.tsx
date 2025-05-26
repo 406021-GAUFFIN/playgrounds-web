@@ -111,7 +111,7 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
           </div>
         </div>
         <div className="col-12 md:col-6">
-          <Card style={{ padding: "10px" } }>
+          <Card style={{ padding: "10px" }}>
             <div className="flex justify-content-between flex-wrap mb-4">
               <h2 className="text-xl font-semibold">Próximos eventos</h2>
               <Button
@@ -137,8 +137,7 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
       <CreateEventModal
         visible={showCreateEventModal}
         onHide={() => setShowCreateEventModal(false)}
-        spaceId={parseInt(params.id)}
-        sports={space.sports}
+        space={space}
         onSuccess={() => {
           loadEvents();
           setShowCreateEventModal(false);

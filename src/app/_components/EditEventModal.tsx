@@ -1,46 +1,42 @@
-"use client";
-import { useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Calendar } from "primereact/calendar";
-import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { useRef } from "react";
-import { Space, Sport } from "../../../_types";
-import { setSeconds, setMilliseconds } from "date-fns";
-import SpaceMap from "./SpaceMap";
+import { useRef, useState } from "react";
+import { Event } from "../services/eventService";
+import { eventService } from "../services/eventService";
 
-interface CreateEventModalProps {
+interface EditEventModalProps {
   visible: boolean;
   onHide: () => void;
-  space: Space;
+  event: Event;
   onSuccess: () => void;
 }
 
-export default function CreateEventModal({
+export const EditEventModal = ({
   visible,
   onHide,
-  space,
+  event,
   onSuccess,
-}: CreateEventModalProps) {
+}: EditEventModalProps) => {
   const toast = useRef<Toast>(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [dateTime, setDateTime] = useState<Date | null>(null);
-  const [minParticipants, setMinParticipants] = useState(2);
-  const [maxParticipants, setMaxParticipants] = useState(5);
-  const [sportId, setSportId] = useState<number | null>(null);
+  const [title, setTitle] = useState(event.title);
+  const [description, setDescription] = useState(event.description);
+  const [dateTime, setDateTime] = useState<Date | null>(
+    new Date(event.dateTime)
+  );
+  const [minParticipants, setMinParticipants] = useState(event.minParticipants);
+  const [maxParticipants, setMaxParticipants] = useState(event.maxParticipants);
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
-    setTitle("");
-    setDescription("");
-    setDateTime(null);
-    setMinParticipants(2);
-    setMaxParticipants(5);
-    setSportId(null);
+    setTitle(event.title);
+    setDescription(event.description);
+    setDateTime(new Date(event.dateTime));
+    setMinParticipants(event.minParticipants);
+    setMaxParticipants(event.maxParticipants);
   };
 
   const handleHide = () => {
@@ -50,7 +46,7 @@ export default function CreateEventModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!dateTime || !sportId) {
+    if (!dateTime) {
       toast.current?.show({
         severity: "error",
         summary: "Error",
@@ -60,15 +56,35 @@ export default function CreateEventModal({
       return;
     }
 
-    // Aseguramos que los segundos sean 00
-    const dateTimeWithZeroSeconds = setMilliseconds(setSeconds(dateTime, 0), 0);
+    // Validar que la fecha sea posterior a la original
+    if (dateTime < new Date(event.dateTime)) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: "La fecha debe ser posterior a la fecha original del evento",
+        life: 3000,
+      });
+      return;
+    }
+
+    // Validar que la cantidad mínima de participantes sea mayor a la actual
+    if (minParticipants <= event.participants.length) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail:
+          "La cantidad mínima de participantes debe ser mayor a la cantidad actual",
+        life: 3000,
+      });
+      return;
+    }
 
     setLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/events`,
+        `${process.env.NEXT_PUBLIC_API_URL}/events/${event.id}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${
@@ -78,24 +94,22 @@ export default function CreateEventModal({
           body: JSON.stringify({
             title,
             description,
-            dateTime: dateTimeWithZeroSeconds.toISOString(),
+            dateTime: dateTime.toISOString(),
             minParticipants,
             maxParticipants,
-            spaceId: space.id,
-            sportId,
           }),
         }
       );
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Error al crear el evento");
+        throw new Error(error.message || "Error al editar el evento");
       }
 
       toast.current?.show({
         severity: "success",
         summary: "Éxito",
-        detail: "Evento creado correctamente",
+        detail: "Evento editado correctamente",
         life: 3000,
       });
 
@@ -108,7 +122,7 @@ export default function CreateEventModal({
         severity: "error",
         summary: "Error",
         detail:
-          error instanceof Error ? error.message : "Error al crear el evento",
+          error instanceof Error ? error.message : "Error al editar el evento",
         life: 3000,
       });
     } finally {
@@ -125,7 +139,7 @@ export default function CreateEventModal({
         className="p-button-text"
       />
       <Button
-        label="Crear"
+        label="Guardar"
         icon="pi pi-check"
         onClick={handleSubmit}
         loading={loading}
@@ -137,23 +151,13 @@ export default function CreateEventModal({
     <>
       <Toast ref={toast} />
       <Dialog
-        header="Nuevo Evento"
+        header="Editar Evento"
         visible={visible}
         style={{ width: "90vw", maxWidth: "600px" }}
         onHide={handleHide}
         footer={footer}
       >
         <div className="formgrid grid">
-          <div className="field col-12 gap-2">
-            <i className="pi pi-map-marker"></i>
-            <span>{space.name}</span>
-          </div>
-
-          <div className="field col-12 gap-2">
-            <div className="border-1 border-round">
-              <SpaceMap space={space} />
-            </div>
-          </div>
           <div className="field col-12">
             <label htmlFor="title" className="block mb-2">
               Título
@@ -192,54 +196,35 @@ export default function CreateEventModal({
               dateFormat="dd/mm/yy"
               showIcon
               stepMinute={15}
+              minDate={new Date(event.dateTime)}
               className="w-full"
             />
           </div>
 
-          <div className="field col-12 p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="field">
-                <label htmlFor="minParticipants" className="block mb-2">
-                  Mínimo de Participantes
-                </label>
-                <InputText
-                  id="minParticipants"
-                  type="number"
-                  value={minParticipants.toString()}
-                  onChange={(e) => setMinParticipants(parseInt(e.target.value))}
-                  min={2}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="field">
-                <label htmlFor="maxParticipants" className="block mb-2">
-                  Máximo de Participantes
-                </label>
-                <InputText
-                  id="maxParticipants"
-                  type="number"
-                  value={maxParticipants.toString()}
-                  onChange={(e) => setMaxParticipants(parseInt(e.target.value))}
-                  min={minParticipants}
-                  className="w-full"
-                />
-              </div>
-            </div>
+          <div className="field col-6">
+            <label htmlFor="minParticipants" className="block mb-2">
+              Participantes Mínimos
+            </label>
+            <InputText
+              id="minParticipants"
+              type="number"
+              value={minParticipants.toString()}
+              onChange={(e) => setMinParticipants(Number(e.target.value))}
+              min={event.participants.length + 1}
+              className="w-full"
+            />
           </div>
 
-          <div className="field col-12">
-            <label htmlFor="sport" className="block mb-2">
-              Deporte
+          <div className="field col-6">
+            <label htmlFor="maxParticipants" className="block mb-2">
+              Participantes Máximos
             </label>
-            <Dropdown
-              id="sport"
-              value={sportId}
-              options={space.sports}
-              onChange={(e) => setSportId(e.value)}
-              optionLabel="name"
-              optionValue="id"
-              placeholder="Seleccione un deporte"
+            <InputText
+              id="maxParticipants"
+              type="number"
+              value={maxParticipants.toString()}
+              onChange={(e) => setMaxParticipants(Number(e.target.value))}
+              min={minParticipants}
               className="w-full"
             />
           </div>
@@ -247,4 +232,4 @@ export default function CreateEventModal({
       </Dialog>
     </>
   );
-}
+};

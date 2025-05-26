@@ -11,6 +11,7 @@ import { es } from "date-fns/locale";
 import { useAuth } from "../../context/AuthContext";
 import { EventStatusTemplate } from "../_components/EventStatusTemplate";
 import { EventsView } from "../_components/EventsView";
+import { ConfirmDialog } from "primereact/confirmdialog";
 
 const EVENT_STATUS = [
   { label: "Disponible", value: "available" },
@@ -54,6 +55,8 @@ export default function EventsPage() {
 
   return (
     <main className="container mx-auto p-4">
+      <ConfirmDialog />
+
       <Card>
         <div className="mb-4">
           <h1 className="text-2xl font-bold mb-4">Mis Eventos</h1>

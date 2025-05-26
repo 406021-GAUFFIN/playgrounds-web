@@ -1,3 +1,4 @@
+import { Space } from "../_types";
 import { PaginatedResponse } from "./_types";
 
 export interface Event {
@@ -15,15 +16,7 @@ export interface Event {
     name: string;
     email: string;
   };
-  space: {
-    id: number;
-    name: string;
-    address: string;
-    isAccessible: boolean;
-    isActive: boolean;
-    latitude: number;
-    longitude: number;
-  };
+  space: Space;
   sport: {
     id: number;
     name: string;
@@ -98,6 +91,26 @@ export const eventService = {
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || "Error al unirse al evento");
+    }
+  },
+
+  leaveEvent: async (eventId: number): Promise<void> => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/leave`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            document.cookie.split("token=")[1].split(";")[0]
+          }`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Error al salir del evento");
     }
   },
 

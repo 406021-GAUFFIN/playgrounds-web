@@ -7,17 +7,30 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Toast } from "primereact/toast";
+import { Checkbox } from "primereact/checkbox";
+import { AuthFooter } from "../_components/AuthFooter";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const router = useRouter();
   const toast = useRef<Toast>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!acceptTerms) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Debes aceptar los términos y condiciones para continuar",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch(
@@ -36,8 +49,7 @@ export default function RegisterPage() {
           toast.current?.show({
             severity: "error",
             summary: "Error",
-            detail:
-              "Ya existe un usuario con este correo electrónico",
+            detail: "Ya existe un usuario con este correo electrónico",
           });
           return;
         }
@@ -148,6 +160,22 @@ export default function RegisterPage() {
                 required
               />
             </div>
+            <div className="mb-4">
+              <div className="flex align-items-center">
+                <Checkbox
+                  inputId="acceptTerms"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.checked ?? false)}
+                  required
+                />
+                <label htmlFor="acceptTerms" className="ml-2">
+                  Al crear mi usuario acepto los{" "}
+                  <Link href="/terms" className="text-primary hover:underline">
+                    términos y condiciones
+                  </Link>
+                </label>
+              </div>
+            </div>
             <Button
               label="Registrarse"
               type="submit"
@@ -157,6 +185,7 @@ export default function RegisterPage() {
           </form>
         </div>
       </div>
+      <AuthFooter />
     </>
   );
 }

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Toast } from "primereact/toast";
+import { AuthFooter } from "../_components/AuthFooter";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -121,6 +122,7 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
+      <AuthFooter />
     </>
   );
 }

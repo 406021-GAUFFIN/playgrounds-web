@@ -18,6 +18,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { EventStatusTemplate } from "../../_components/EventStatusTemplate";
 import { EventsView } from "../../_components/EventsView";
 import SpaceDetailCard from "./_components/SpaceDetailCard";
+import SpaceRatings from "./_components/SpaceRatings";
 
 const SpaceMap = dynamic(() => import("./_components/SpaceMap"), {
   ssr: false,
@@ -34,6 +35,17 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
   const [pageSize] = useState(10);
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const toast = useRef<Toast>(null);
+
+  const loadSpace = async () => {
+    try {
+      const data = await spaceService.getSpaceById(params.id);
+      setSpace(data);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadEvents = async () => {
     setLoadingEvents(true);
@@ -55,17 +67,6 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    const loadSpace = async () => {
-      try {
-        const data = await spaceService.getSpaceById(params.id);
-        setSpace(data);
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadSpace();
   }, [params.id]);
 
@@ -132,6 +133,16 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
             />
           </Card>
         </div>
+      </div>
+
+      <div className="col-12">
+        <SpaceRatings
+          ratings={space.ratings}
+          spaceId={params.id}
+          onRatingCreated={() => {
+            loadSpace();
+          }}
+        />
       </div>
 
       <CreateEventModal

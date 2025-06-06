@@ -1,3 +1,4 @@
+import { Rating } from "./spaces/_types";
 import { BaseEntity } from "./types/baseEntity";
 
 export interface Sport extends BaseEntity {
@@ -18,4 +19,6 @@ export interface Space extends BaseEntity {
   conditions: string;
   description: string;
   sports: Sport[];
+  averageRating: number | null;
+  ratings: Rating[];
 }

@@ -31,6 +31,17 @@ export default function SpaceDetailCard({ space }: SpaceDetailCardProps) {
             <p>
               <strong>Accesible:</strong> {space.isAccessible ? "Sí" : "No"}
             </p>
+            <p>
+              <strong>Calificación promedio:</strong>{" "}
+              {space.averageRating ? (
+                <span className="flex items-center gap-1">
+                  {space.averageRating.toFixed(1)}
+                  <i className="pi pi-star-fill text-yellow-500"></i>
+                </span>
+              ) : (
+                "Sin calificaciones"
+              )}
+            </p>
           </div>
 
           <div>

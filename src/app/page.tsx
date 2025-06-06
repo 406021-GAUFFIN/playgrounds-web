@@ -120,6 +120,17 @@ export default function Home() {
               <h3 className="font-semibold">Accesibilidad</h3>
               <p>{selectedSpace.isAccessible ? "Accesible" : "No accesible"}</p>
             </div>
+            <div>
+              <h3 className="font-semibold">Calificación promedio</h3>
+              {selectedSpace.averageRating ? (
+                <p className="flex items-center gap-1">
+                  {selectedSpace.averageRating.toFixed(1)}
+                  <i className="pi pi-star-fill text-yellow-500"></i>
+                </p>
+              ) : (
+                <p>Sin calificaciones</p>
+              )}
+            </div>
           </div>
         )}
       </Dialog>

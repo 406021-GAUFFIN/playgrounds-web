@@ -1,5 +1,16 @@
 import { BaseEntity } from "../../../types/baseEntity";
 
+export interface Rating extends BaseEntity {
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    name: string;
+    email: string;
+  };
+}
+
 export interface Space extends BaseEntity {
   name: string;
   address: string;
@@ -11,6 +22,8 @@ export interface Space extends BaseEntity {
   latitude: number;
   longitude: number;
   sports: Sport[];
+  averageRating: number | null;
+  ratings: Rating[];
 }
 
 export interface Sport extends BaseEntity {

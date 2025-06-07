@@ -7,7 +7,9 @@ import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { useState } from "react";
 import CreateRatingModal from "./CreateRatingModal";
+import EditRatingModal from "./EditRatingModal";
 import { Divider } from "primereact/divider";
+import { useAuth } from "../../../../context/AuthContext";
 
 interface SpaceRatingsProps {
   ratings: Rating[];
@@ -29,6 +31,20 @@ export default function SpaceRatings({
   onRatingCreated,
 }: SpaceRatingsProps) {
   const [showCreateRatingModal, setShowCreateRatingModal] = useState(false);
+  const [showEditRatingModal, setShowEditRatingModal] = useState(false);
+  const [selectedRating, setSelectedRating] = useState<Rating | null>(null);
+  const { user } = useAuth();
+
+  const sortedRatings = [...ratings].sort((a, b) => {
+    if (a.user.email === user?.email) return -1;
+    if (b.user.email === user?.email) return 1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  const handleEditClick = (rating: Rating) => {
+    setSelectedRating(rating);
+    setShowEditRatingModal(true);
+  };
 
   return (
     <Card>
@@ -47,7 +63,7 @@ export default function SpaceRatings({
           <p className="text-gray-500">No hay calificaciones aún</p>
         ) : (
           <div className="space-y-4">
-            {ratings.map((rating, index) => (
+            {sortedRatings.map((rating, index) => (
               <div key={rating.id}>
                 <div className="flex items-center gap-2 mb-2">
                   <Avatar
@@ -61,6 +77,11 @@ export default function SpaceRatings({
                       <div className="flex justify-content-start gap-2">
                         <span className="font-semibold">
                           {rating.user.name}
+                          {rating.user.email === user?.email && (
+                            <span className="ml-2 text-sm text-blue-500">
+                              (Tú)
+                            </span>
+                          )}
                         </span>
                         <span className="text-gray-500 text-sm">
                           {format(
@@ -96,9 +117,19 @@ export default function SpaceRatings({
                     >
                       {rating.comment || "Sin comentario"}
                     </p>
+                    {rating.user.id === user?.id && (
+                      <div className="flex justify-content-end flex-wrap">
+                        <Button
+                          icon="pi pi-pencil"
+                          rounded
+                          outlined
+                          onClick={() => handleEditClick(rating)}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
-                {index < ratings.length - 1 && <Divider />}
+                {index < sortedRatings.length - 1 && <Divider />}
               </div>
             ))}
           </div>
@@ -111,6 +142,19 @@ export default function SpaceRatings({
         spaceId={spaceId}
         onSuccess={onRatingCreated}
       />
+
+      {selectedRating && (
+        <EditRatingModal
+          visible={showEditRatingModal}
+          onHide={() => {
+            setShowEditRatingModal(false);
+            setSelectedRating(null);
+          }}
+          spaceId={spaceId}
+          rating={selectedRating}
+          onSuccess={onRatingCreated}
+        />
+      )}
     </Card>
   );
 }

@@ -8,6 +8,7 @@ export interface Rating extends BaseEntity {
   user: {
     name: string;
     email: string;
+    id: number;
   };
 }
 

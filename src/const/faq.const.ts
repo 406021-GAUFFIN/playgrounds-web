@@ -47,7 +47,51 @@ export const faqList: FAQ[] = [
   {
     question: "¿Cómo puedo contactar al soporte?",
     answer:
-      "Puedes enviar un correo electrónico a ljgauffin@gmail.com",
+      "Puedes enviar un correo electrónico a playgrounds.contact@gmail.com",
   },
-
+  {
+    question: "¿Puedo usar Playgrounds desde el celular?",
+    answer:
+      "Sí, la plataforma está optimizada para dispositivos móviles y puedes acceder desde cualquier navegador en tu celular o tablet.",
+  },
+  {
+    question: "¿Qué deportes puedo organizar o buscar en Playgrounds?",
+    answer:
+      "Puedes organizar o buscar eventos de cualquier deporte disponible en la plataforma, como fútbol, básquet, vóley, handball, entre otros. La lista siempre crece, por lo que si falta algún deporte, puedes sugerirlo a soporte.",
+  },
+  {
+    question: "¿Cómo se protege mi información personal?",
+    answer:
+      "Tus datos personales solo se usan para el funcionamiento interno de la plataforma y no se comparten con terceros ni se utilizan con fines comerciales.",
+  },
+  {
+    question: "¿Puedo eliminar mi cuenta y mis datos?",
+    answer:
+      "Sí, puedes solicitar el borrado total de tu cuenta y datos personales contactando a soporte a través del correo playgrounds.contact@gmail.com.",
+  },
+  {
+    question: "¿Qué hago si tengo un problema con otro usuario?",
+    answer:
+      "Si tienes un inconveniente con otro usuario, puedes reportarlo enviando un correo a soporte. El equipo de Playgrounds analizará la situación y tomará las medidas necesarias.",
+  },
+  {
+    question: "¿Playgrounds organiza los eventos?",
+    answer:
+      "No, Playgrounds solo facilita el contacto entre usuarios para organizar eventos deportivos. La organización y responsabilidad de cada evento recae en los propios usuarios.",
+  },
+  {
+    question: "¿Puedo editar los datos de mi perfil?",
+    answer:
+      "Sí, puedes editar tu nombre, correo electrónico y otros datos desde la sección de perfil una vez que hayas iniciado sesión.",
+  },
+  {
+    question: "¿Qué pasa si olvido mi contraseña?",
+    answer:
+      "Para restaurar tu contraseña debés contactarte con soporte",
+  },
+  {
+    question: "¿Para que se usa mi ubicación, como será usada esa información?",
+    answer:
+      "Los usuarios tienen la posibilidad de marcar su ubicación en la configuración de perfil. El único uso de ésta información es si el usuario habilita la opción de Recibir notificaciones de eventos cerca mío. No es necesario seleccionar una ubicación exacta si no deseas compartirla.",
+  },
 ];

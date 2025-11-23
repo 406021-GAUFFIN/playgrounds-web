@@ -81,6 +81,11 @@ const Header = () => {
       icon: "pi pi-pen-to-square",
       command: () => handleNavigation("/spaces"),
     },
+    {
+      label: "Reportes",
+      icon: "pi pi-chart-line",
+      command: () => handleNavigation("/reports"),
+    },
   ];
 
   const footerItem = {

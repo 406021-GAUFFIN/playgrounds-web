@@ -39,9 +39,11 @@ function MapEvents({
   }) => void;
 }) {
   const map = useMap();
+  const hasInitialized = useRef(false);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const handleMoveEnd = () => {
+    const handleBoundsChange = () => {
       const bounds = map.getBounds();
       onBoundsChange?.({
         minLat: bounds.getSouth(),
@@ -51,9 +53,48 @@ function MapEvents({
       });
     };
 
+    const debouncedBoundsChange = () => {
+      // Cancelar el timeout anterior si existe
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      
+      // Establecer un nuevo timeout de 500ms
+      debounceTimeoutRef.current = setTimeout(() => {
+        handleBoundsChange();
+      }, 500);
+    };
+
+    // Disparar cuando el mapa se mueve (solo después de la inicialización)
+    const handleMoveEnd = () => {
+      if (hasInitialized.current) {
+        debouncedBoundsChange();
+      }
+    };
+
+    // Disparar cuando el mapa hace zoom (solo después de la inicialización)
+    const handleZoomEnd = () => {
+      if (hasInitialized.current) {
+        debouncedBoundsChange();
+      }
+    };
+
     map.on("moveend", handleMoveEnd);
+    map.on("zoomend", handleZoomEnd);
+    
+    // Disparar solo una vez al inicializar
+    const initialTimeout = setTimeout(() => {
+      handleBoundsChange();
+      hasInitialized.current = true;
+    }, 300);
+
     return () => {
       map.off("moveend", handleMoveEnd);
+      map.off("zoomend", handleZoomEnd);
+      clearTimeout(initialTimeout);
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
     };
   }, [map, onBoundsChange]);
 
@@ -95,12 +136,12 @@ export default function MapComponent({
             click: () => onMarkerClick?.(space),
           }}
         >
-          <Popup>
+          {/* <Popup>
             <div>
               <h3 className="font-bold">{space.name}</h3>
               <p>{space.address}</p>
             </div>
-          </Popup>
+          </Popup> */}
         </Marker>
       ))}
     </MapContainer>

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Dialog } from "primereact/dialog";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Space } from "./_types";
@@ -19,14 +19,14 @@ export default function Home() {
     maxLat: number;
     minLng: number;
     maxLng: number;
-  }>({
-    minLat: -31.4327,
-    maxLat: -31.3927,
-    minLng: -64.2077,
-    maxLng: -64.1677,
-  });
+  } | null>(null);
+
+  // Ref para el timeout del debounce
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const loadSpaces = async () => {
+    if (!bounds) return; // No cargar si no hay bounds
+
     setLoadingSpaces(true);
     try {
       const data = await spaceService.getSpaces({
@@ -52,26 +52,60 @@ export default function Home() {
     loadSpaces();
   }, [bounds]);
 
-  return (
-    <main className="flex min-h-screen">
-      {/* <div className="p-2 bg-white shadow-sm">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Espacios cerca tuyo
-        </h1>
-        {spaces.length > 0 ? (
-          <p className="text-gray-600">
-            Mostrando {spaces.length} espacios de {Math.min(totalSpaces, 30)}
-          </p>
-        ) : (
-          <p className="text-gray-600">No hay espacios</p>
-        )}
-      </div> */}
+  // Función para comparar bounds
+  const areBoundsEqual = (a: typeof bounds, b: typeof bounds) => {
+    if (!a || !b) return false;
+    return (
+      a.minLat === b.minLat &&
+      a.maxLat === b.maxLat &&
+      a.minLng === b.minLng &&
+      a.maxLng === b.maxLng
+    );
+  };
 
+  const handleBoundsChange = (newBounds: {
+    minLat: number;
+    maxLat: number;
+    minLng: number;
+    maxLng: number;
+  }) => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      setBounds((prev) => {
+        if (areBoundsEqual(prev, newBounds)) {
+          return prev; // No actualizar si no cambió
+        }
+        return newBounds;
+      });
+    }, 200);
+  };
+
+  return (
+    <main className="flex flex-column flex-1 h-full overflow-hidden">
       <div className="flex-1 relative border-1 border-round m-3">
+        <div
+          className="absolute top-0 left-50 p-3 bg-white shadow-3 border-round flex flex-column gap-1 mt-3"
+          style={{ transform: "translateX(-50%)", zIndex: 1000 }}
+        >
+          <h3 className="font-bold text-gray-800 m-0 text-base text-center">
+            Espacios cerca tuyo
+          </h3>
+          {spaces.length > 0 ? (
+            <p className="text-sm text-gray-600 m-0 text-center">
+              Mostrando {spaces.length} espacios de {Math.min(totalSpaces, 30)}
+            </p>
+          ) : (
+            <p className="text-sm text-gray-600 m-0 text-center">No hay espacios</p>
+          )}
+        </div>
+
         <MapComponent
           initialLat={-31.4127}
           initialLng={-64.1877}
-          onBoundsChange={setBounds}
+          onBoundsChange={handleBoundsChange}
           markers={spaces}
           onMarkerClick={setSelectedSpace}
         />
@@ -81,6 +115,12 @@ export default function Home() {
         visible={!!selectedSpace}
         onHide={() => setSelectedSpace(null)}
         header={selectedSpace?.name}
+        modal
+        appendTo={document.body}
+        keepInViewport={true}
+        baseZIndex={2147483647}
+        draggable={false}
+        resizable={false} 
         footer={
           <div className="flex justify-content-center align-items-center">
             <Button
@@ -135,11 +175,7 @@ export default function Home() {
         )}
       </Dialog>
 
-      {loadingSpaces && (
-        <div className="fixed bottom-4 right-4 bg-white p-4 rounded-lg shadow-lg">
-          <ProgressSpinner />
-        </div>
-      )}
+  
     </main>
   );
 }

@@ -29,7 +29,7 @@ export default function TermsPage() {
         <div className="text-900 mb-4">
           <h6 className="text-xl font-bold mb-2">1. Definiciones</h6>
           <p className="mb-3">
-            En este documento, "Playgrounds" se refiere a la plataforma web y móvil que permite a los usuarios organizar y participar en eventos deportivos, así como gestionar espacios deportivos. "Usuario" se refiere a cualquier persona que acceda o utilice la plataforma.
+            En este documento, &quot;Playgrounds&quot; se refiere a la plataforma web y móvil que permite a los usuarios organizar y participar en eventos deportivos, así como gestionar espacios deportivos. &quot;Usuario&quot; se refiere a cualquier persona que acceda o utilice la plataforma.
           </p>
 
           <h6 className="text-xl font-bold mb-2">2. Aceptación de los Términos</h6>

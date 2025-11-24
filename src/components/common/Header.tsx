@@ -30,28 +30,7 @@ const Header = () => {
 
   // Items base que todos los usuarios pueden ver
   const baseItems = [
-    {
-      template: () => {
-        return (
-          <div className="flex flex-column gap-2 p-4">
-            <div className="flex align-items-center gap-2">
-              <Image
-                src="/logo-medium.webp"
-                alt="Logo Playgrounds"
-                width={40}
-                height={40}
-                priority
-                className="rounded-full"
-              />
-              <span className="font-bold text-xl">Playgrounds</span>
-            </div>
-            <div className="flex flex-column gap-2">
-              <hr className="border-top-1 border-none surface-border my-3" />
-            </div>
-          </div>
-        );
-      },
-    },
+    
     {
       label: "Inicio",
       icon: "pi pi-fw pi-home",
@@ -88,43 +67,9 @@ const Header = () => {
     },
   ];
 
-  const footerItem = {
-    template: () => {
-      return (
-        <div className="flex flex-column gap-2 p-4 mt-auto">
-          <hr className="border-top-1 border-none surface-border my-3" />
-          <div className="flex items-center gap-2 ">
-            <Avatar
-              label={getInitials(user?.name || "")}
-              size="large"
-              style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
-              shape="circle"
-            />
-            <div className="flex flex-column">
-              <span className="font-semibold text-xl">{user?.name}</span>
-              <span className="text-sm text-500">{user?.email}</span>
-            </div>
-          </div>
-          <Button
-            label="Cerrar Sesión"
-            icon="pi pi-sign-out"
-            severity="danger"
-            outlined
-            onClick={() => {
-              setSidebarVisible(false);
-              logout();
-            }}
-            className="p-button-text w-full"
-          />
-        </div>
-      );
-    },
-  };
-
   const navItems = [
     ...baseItems,
     ...(user?.role === "ADMIN" ? adminItems : []),
-    footerItem,
   ];
 
   const headerItems: MenuItem[] = [];
@@ -145,12 +90,12 @@ const Header = () => {
         <Image
           src="/logo-small.webp"
           alt="Logo Playgrounds"
-          width={32}
-          height={32}
+          width={28}
+          height={28}
           priority
           className="rounded-full"
         />
-        <span className="font-semibold text-xl">Playgrounds</span>
+        <span className="font-semibold text-lg">Playgrounds</span>
       </div>
     </div>
   );
@@ -163,7 +108,6 @@ const Header = () => {
       >
         <Avatar
           label={getInitials(user?.name || "")}
-          size="large"
           style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
           shape="circle"
         />
@@ -171,11 +115,32 @@ const Header = () => {
     </div>
   );
 
+  const customSidenavHeader= (
+
+          <div className="flex flex-column">
+            <div className="flex align-items-center gap-2">
+              <Image
+                src="/logo-medium.webp"
+                alt="Logo Playgrounds"
+                width={28}
+                height={28}
+                priority
+                className="rounded-full"
+              />
+              <span className="font-bold text-lg">Playgrounds</span>
+            </div>
+          </div>
+
+  )
+   
+
+ 
+
   return (
     <>
       <Menubar
         model={headerItems}
-        className="border-noround"
+        className="border-noround-p2"
         start={start}
         end={end}
       />
@@ -183,9 +148,40 @@ const Header = () => {
       <Sidebar
         visible={sidebarVisible}
         onHide={() => setSidebarVisible(false)}
+        header={customSidenavHeader}
         className="w-full md:w-20rem"
       >
-        <Menu model={navItems} className="w-full border-none" />
+        <div className="flex flex-column h-full">
+          <Menu model={navItems} className="w-full border-none flex-1" />
+
+          <div className="flex flex-column gap-2 p-2 mt-auto">
+            <hr className="border-top-1 border-none surface-border my-2" />
+            <div className="flex align-items-center gap-2">
+              <Avatar
+                label={getInitials(user?.name || "")}
+                style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
+                shape="circle"
+              />
+              <div className="flex flex-column">
+                <span className="font-semibold text-base">{user?.name}</span>
+                <span className="text-sm text-500">{user?.email}</span>
+              </div>
+            </div>
+            <div className="flex justify-content-center">
+              <Button
+                label="Cerrar Sesión"
+                icon="pi pi-sign-out"
+                severity="danger"
+                outlined
+                onClick={() => {
+                  setSidebarVisible(false);
+                  logout();
+                }}
+                className="p-button-text"
+              />
+            </div>
+          </div>
+        </div>
       </Sidebar>
     </>
   );

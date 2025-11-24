@@ -13,7 +13,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const isLoginPage = publicRoutes.includes(pathname);
 
   return (
-    <div className="min-h-screen">
+    <div className="flex flex-column h-screen">
       {!isLoginPage && <Header />}
       {children}
       {/* {!isLoginPage && <Footer />} */}

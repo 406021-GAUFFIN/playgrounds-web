@@ -15,6 +15,10 @@ export default function Home() {
   const [loadingSpaces, setLoadingSpaces] = useState(false);
   const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
   const [totalSpaces, setTotalSpaces] = useState(0);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [bounds, setBounds] = useState<{
     minLat: number;
     maxLat: number;
@@ -24,6 +28,24 @@ export default function Home() {
 
   // Ref para el timeout del debounce
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Request user location on mount
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.log("Geolocation error:", error.message);
+          // If user denies or error occurs, we keep the default Córdoba center
+        }
+      );
+    }
+  }, []);
 
   const loadSpaces = async () => {
     if (!bounds) return; // No cargar si no hay bounds
@@ -84,6 +106,32 @@ export default function Home() {
     }, 200);
   };
 
+  const handleLocationUpdate = (): Promise<{
+    lat: number;
+    lng: number;
+  } | null> => {
+    return new Promise((resolve) => {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const newLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            setUserLocation(newLocation);
+            resolve(newLocation);
+          },
+          (error) => {
+            console.log("Geolocation error:", error.message);
+            resolve(null);
+          }
+        );
+      } else {
+        resolve(null);
+      }
+    });
+  };
+
   return (
     <main className="flex flex-column flex-1 h-full overflow-hidden">
       <div className="flex-1 relative border-1 border-round m-3">
@@ -108,7 +156,9 @@ export default function Home() {
         <MapComponent
           initialLat={-31.4127}
           initialLng={-64.1877}
+          userLocation={userLocation}
           onBoundsChange={handleBoundsChange}
+          onLocationUpdate={handleLocationUpdate}
           markers={spaces}
           onMarkerClick={setSelectedSpace}
         />

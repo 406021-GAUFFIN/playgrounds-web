@@ -85,7 +85,7 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
   if (!space) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <h1 className="text-2xl text-gray-800">Espacio no encontrado</h1>
+        <h1 className="text-2xl">Espacio no encontrado</h1>
       </div>
     );
   }

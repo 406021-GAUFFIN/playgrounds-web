@@ -148,3 +148,26 @@ body.dark-mode .leaflet-control-zoom a:hover {
   background-color: var(--surface-hover) !important;
   color: var(--text-color) !important;
 }
+
+/* Full width tabs */
+.full-width-tabs .p-tabview-nav {
+  display: flex;
+}
+.full-width-tabs .p-tabview-nav li {
+  flex: 1;
+}
+.full-width-tabs .p-tabview-nav li .p-tabview-nav-link {
+  justify-content: center;
+  width: 100%;
+}
+
+.full-width-tabs .p-tabview-panels {
+  padding: 0 !important;
+}
+
+.full-width-tabs .p-card .p-card-body {
+  padding: 10px !important;
+}
+.p-dataview-content {
+  width: 100% !important;
+}

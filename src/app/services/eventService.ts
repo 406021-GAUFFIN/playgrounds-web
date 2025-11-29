@@ -23,6 +23,7 @@ export interface Event {
     name: string;
     email: string;
   }[];
+  distance?: number;
 }
 
 export interface GetEventsParams {
@@ -32,6 +33,11 @@ export interface GetEventsParams {
   status?: string[];
   futureOnly?: boolean;
   participantId?: number;
+  participantToExcludeId?: number;
+  sportIds?: number[];
+  latitude?: number;
+  longitude?: number;
+  sortByDistance?: "ASC" | "DESC";
 }
 
 export const eventService = {
@@ -52,6 +58,21 @@ export const eventService = {
       queryParams.append("futureOnly", params.futureOnly.toString());
     if (params.participantId)
       queryParams.append("participantId", params.participantId.toString());
+    if (params.participantToExcludeId)
+      queryParams.append(
+        "participantToExcludeId",
+        params.participantToExcludeId.toString()
+      );
+    if (params.sportIds)
+      params.sportIds.forEach((sportId) =>
+        queryParams.append("sportIds", sportId.toString())
+      );
+    if (params.latitude !== undefined)
+      queryParams.append("latitude", params.latitude.toString());
+    if (params.longitude !== undefined)
+      queryParams.append("longitude", params.longitude.toString());
+    if (params.sortByDistance)
+      queryParams.append("sortByDistance", params.sortByDistance);
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/events?${queryParams}`,

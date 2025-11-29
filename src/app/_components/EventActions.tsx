@@ -158,8 +158,9 @@ export const EventActions = ({
         {canJoin && (
           <Button
             icon="pi pi-check-circle"
-            className="p-button-rounded p-button-text"
+            className="p-button-rounded p-button-text p-button-sm"
             tooltip="Anotarse"
+            size="small"
             tooltipOptions={{ position: "top" }}
             onClick={() => confirmJoinEvent(event)}
           />
@@ -167,8 +168,9 @@ export const EventActions = ({
         {canLeave && (
           <Button
             icon="pi pi-sign-out"
-            className="p-button-rounded p-button-text p-button-danger"
+            className="p-button-rounded p-button-text p-button-danger p-button-sm"
             tooltip="Abandonar evento"
+            size="small"
             tooltipOptions={{ position: "top" }}
             onClick={() => confirmLeaveEvent(event)}
           />
@@ -176,8 +178,9 @@ export const EventActions = ({
         {canEdit && (
           <Button
             icon="pi pi-pencil"
-            className="p-button-rounded p-button-text"
+            className="p-button-rounded p-button-text p-button-sm"
             tooltip="Editar"
+            size="small"
             tooltipOptions={{ position: "top" }}
             onClick={() => setShowEditModal(true)}
           />
@@ -185,8 +188,9 @@ export const EventActions = ({
         {canCancel && (
           <Button
             icon="pi pi-times"
-            className="p-button-rounded p-button-text p-button-danger"
+            className="p-button-rounded p-button-text p-button-danger p-button-sm"
             tooltip="Cancelar"
+            size="small"
             tooltipOptions={{ position: "top" }}
             onClick={() => confirmCancelEvent(event)}
           />

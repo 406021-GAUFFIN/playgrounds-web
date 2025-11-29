@@ -41,9 +41,10 @@ export const EventsView = ({
       <div className="flex gap-2">
         <Button
           icon="pi pi-eye"
-          className="p-button-rounded p-button-text"
+          className="p-button-rounded p-button-text p-button-sm"
           tooltip="Ver detalle"
           tooltipOptions={{ position: "top" }}
+          size="small"
           onClick={() => {
             setSelectedEvent(event);
             setShowDetailModal(true);
@@ -63,7 +64,7 @@ export const EventsView = ({
           })}
         >
           <div className="flex flex-column gap-3">
-            <div className="flex justify-content-between align-items-center">
+            <div className="flex flex-column sm:flex-row justify-content-between align-items-start sm:align-items-center gap-2">
               <h2 className="text-xl font-bold m-0">{event.title}</h2>
               <EventStatusTemplate event={event} />
             </div>
@@ -75,22 +76,31 @@ export const EventsView = ({
               </div>
               <div className="flex align-items-center gap-2">
                 <i className="pi pi-map-marker"></i>
-                <span>{event.space.name}</span>
+                <span>
+                  {event.space.name}
+                  {event.distance !== undefined && (
+                    <span className="text-color-secondary ml-1">
+                      ({event.distance}m)
+                    </span>
+                  )}
+                </span>
               </div>
               <div className="flex align-items-center gap-2">
                 <SportBadge key={event.sport.id} sport={event.sport} />
               </div>
-              <div className="flex align-items-center gap-2">
-                <i className="pi pi-users"></i>
-                <span>
-                  {event.participants.length}/{event.maxParticipants}{" "}
-                  participantes
-                </span>
-              </div>
-            </div>
 
-            <div className="flex justify-content-end">
-              {getEventActions(event)}
+              <div className="flex flex-column sm:flex-row justify-content-between align-items-start sm:align-items-center gap-3 mt-2">
+                <div className="flex align-items-center gap-2">
+                  <i className="pi pi-users"></i>
+                  <span>
+                    {event.participants.length}/{event.maxParticipants}{" "}
+                    participantes
+                  </span>
+                </div>
+                <div className="w-full sm:w-auto flex justify-content-end">
+                  {getEventActions(event)}
+                </div>
+              </div>
             </div>
           </div>
         </div>

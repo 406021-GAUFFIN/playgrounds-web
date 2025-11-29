@@ -5,7 +5,13 @@ import { Card } from "primereact/card";
 import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { useRequireAuth } from "@/context/AuthContext";
-import { format, startOfWeek, addDays, startOfMonth, endOfMonth } from "date-fns";
+import {
+  format,
+  startOfWeek,
+  addDays,
+  startOfMonth,
+  endOfMonth,
+} from "date-fns";
 import { es } from "date-fns/locale";
 import { reportService } from "../services/reportService";
 import { WeeklyStats, ParticipantsStats, TimeSlotsStats } from "./_types";
@@ -17,22 +23,35 @@ import DateRangeControls from "./_components/DateRangeControls";
 
 export default function ReportsPage() {
   const { user } = useRequireAuth(["ADMIN"]);
-  
+
   // Estados para el gráfico semanal
   const [weeklyStats, setWeeklyStats] = useState<WeeklyStats | null>(null);
-  const [selectedWeek, setSelectedWeek] = useState<Date>(startOfWeek(new Date()));
+  const [selectedWeek, setSelectedWeek] = useState<Date>(
+    startOfWeek(new Date())
+  );
   const [weeklyLoading, setWeeklyLoading] = useState(false);
 
   // Estados para el gráfico de participantes
-  const [participantsStats, setParticipantsStats] = useState<ParticipantsStats | null>(null);
-  const [participantsStartDate, setParticipantsStartDate] = useState<Date>(startOfMonth(new Date()));
-  const [participantsEndDate, setParticipantsEndDate] = useState<Date>(endOfMonth(new Date()));
+  const [participantsStats, setParticipantsStats] =
+    useState<ParticipantsStats | null>(null);
+  const [participantsStartDate, setParticipantsStartDate] = useState<Date>(
+    startOfMonth(new Date())
+  );
+  const [participantsEndDate, setParticipantsEndDate] = useState<Date>(
+    endOfMonth(new Date())
+  );
   const [participantsLoading, setParticipantsLoading] = useState(false);
 
   // Estados para el gráfico de franjas horarias
-  const [timeSlotsStats, setTimeSlotsStats] = useState<TimeSlotsStats | null>(null);
-  const [timeSlotsStartDate, setTimeSlotsStartDate] = useState<Date>(startOfMonth(new Date()));
-  const [timeSlotsEndDate, setTimeSlotsEndDate] = useState<Date>(endOfMonth(new Date()));
+  const [timeSlotsStats, setTimeSlotsStats] = useState<TimeSlotsStats | null>(
+    null
+  );
+  const [timeSlotsStartDate, setTimeSlotsStartDate] = useState<Date>(
+    startOfMonth(new Date())
+  );
+  const [timeSlotsEndDate, setTimeSlotsEndDate] = useState<Date>(
+    endOfMonth(new Date())
+  );
   const [timeSlotsLoading, setTimeSlotsLoading] = useState(false);
 
   const fetchWeeklyStats = async (weekStart: Date) => {
@@ -53,7 +72,10 @@ export default function ReportsPage() {
     try {
       const formattedStartDate = format(startDate, "yyyy-MM-dd");
       const formattedEndDate = format(endDate, "yyyy-MM-dd");
-      const data = await reportService.getParticipantsStats(formattedStartDate, formattedEndDate);
+      const data = await reportService.getParticipantsStats(
+        formattedStartDate,
+        formattedEndDate
+      );
       setParticipantsStats(data);
     } catch (error) {
       console.error("Error:", error);
@@ -67,7 +89,10 @@ export default function ReportsPage() {
     try {
       const formattedStartDate = format(startDate, "yyyy-MM-dd");
       const formattedEndDate = format(endDate, "yyyy-MM-dd");
-      const data = await reportService.getTimeSlotsStats(formattedStartDate, formattedEndDate);
+      const data = await reportService.getTimeSlotsStats(
+        formattedStartDate,
+        formattedEndDate
+      );
       setTimeSlotsStats(data);
     } catch (error) {
       console.error("Error:", error);
@@ -101,11 +126,11 @@ export default function ReportsPage() {
   };
 
   const handlePreviousWeek = () => {
-    setSelectedWeek(prev => addDays(prev, -7));
+    setSelectedWeek((prev) => addDays(prev, -7));
   };
 
   const handleNextWeek = () => {
-    setSelectedWeek(prev => addDays(prev, 7));
+    setSelectedWeek((prev) => addDays(prev, 7));
   };
 
   const handleParticipantsStartDateChange = (date: Date | null) => {
@@ -139,15 +164,13 @@ export default function ReportsPage() {
   return (
     <div className="container mx-auto p-4 max-w-7xl">
       <div className="mb-6 text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Reportes
-        </h1>
+        <h1 className="text-3xl font-bold mb-2">Reportes</h1>
       </div>
 
       <div className="grid gap-3 mb-4">
         <Card className="col">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            <h2 className="text-xl font-semibold mb-2">
               Eventos por Deporte - Semana
             </h2>
             {weeklyStats && (
@@ -156,15 +179,21 @@ export default function ReportsPage() {
               </p>
             )}
           </div>
-          
+
           {weeklyLoading ? (
-            <div className="flex items-center justify-center" style={{ height: '1024px', minHeight: '1024px' }}>
+            <div
+              className="flex items-center justify-center"
+              style={{ height: "1024px", minHeight: "1024px" }}
+            >
               <i className="pi pi-spin pi-spinner text-2xl"></i>
             </div>
           ) : weeklyStats ? (
             <WeeklyEventsChart weeklyStats={weeklyStats} />
           ) : (
-            <div className="flex items-center justify-center text-gray-500" style={{ height: '1024px', minHeight: '1024px' }}>
+            <div
+              className="flex items-center justify-center text-gray-500"
+              style={{ height: "1024px", minHeight: "1024px" }}
+            >
               No hay datos disponibles
             </div>
           )}
@@ -198,8 +227,13 @@ export default function ReportsPage() {
               <div className="text-sm text-gray-600">
                 {weeklyStats && (
                   <>
-                    {format(new Date(weeklyStats.weekStart), "dd/MM/yyyy", { locale: es })} - 
-                    {format(new Date(weeklyStats.weekEnd), "dd/MM/yyyy", { locale: es })}
+                    {format(new Date(weeklyStats.weekStart), "dd/MM/yyyy", {
+                      locale: es,
+                    })}{" "}
+                    -
+                    {format(new Date(weeklyStats.weekEnd), "dd/MM/yyyy", {
+                      locale: es,
+                    })}
                   </>
                 )}
               </div>
@@ -209,7 +243,7 @@ export default function ReportsPage() {
 
         <Card className="col">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            <h2 className="text-xl font-semibold mb-2">
               Promedio de Participantes por Deporte
             </h2>
           </div>
@@ -223,29 +257,31 @@ export default function ReportsPage() {
               title="Período"
             />
           </div>
-          
+
           {participantsLoading ? (
-            <div className="flex items-center justify-center" style={{ height: '1024px', minHeight: '1024px' }}>
+            <div
+              className="flex items-center justify-center"
+              style={{ height: "1024px", minHeight: "1024px" }}
+            >
               <i className="pi pi-spin pi-spinner text-2xl"></i>
             </div>
           ) : participantsStats ? (
             <ParticipantsChart participantsStats={participantsStats} />
           ) : (
-            <div className="flex items-center justify-center text-gray-500" style={{ height: '1024px', minHeight: '1024px' }}>
+            <div
+              className="flex items-center justify-center text-gray-500"
+              style={{ height: "1024px", minHeight: "1024px" }}
+            >
               No hay datos disponibles
             </div>
           )}
         </Card>
-        </div>
+      </div>
 
-        <div className="grid">
-
-
-     
-
+      <div className="grid">
         <Card className="col">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            <h2 className="text-xl font-semibold mb-2">
               Frecuencia de Eventos por Franja Horaria
             </h2>
           </div>
@@ -259,27 +295,29 @@ export default function ReportsPage() {
               title="Período"
             />
           </div>
-          
+
           {timeSlotsLoading ? (
-            <div className="flex items-center justify-center" style={{ height: '1024px', minHeight: '1024px' }}>
+            <div
+              className="flex items-center justify-center"
+              style={{ height: "1024px", minHeight: "1024px" }}
+            >
               <i className="pi pi-spin pi-spinner text-2xl"></i>
             </div>
           ) : timeSlotsStats ? (
             <TimeSlotsChart timeSlotsStats={timeSlotsStats} />
           ) : (
-            <div className="flex items-center justify-center text-gray-500" style={{ height: '1024px', minHeight: '1024px' }}>
+            <div
+              className="flex items-center justify-center"
+              style={{ height: "1024px", minHeight: "1024px" }}
+            >
               No hay datos disponibles
             </div>
           )}
         </Card>
         <div className="col">
-
-
-        {weeklyStats && <WeeklyStatsCards weeklyStats={weeklyStats} />}
-
+          {weeklyStats && <WeeklyStatsCards weeklyStats={weeklyStats} />}
         </div>
-        </div>
-      
+      </div>
     </div>
   );
-} 
+}

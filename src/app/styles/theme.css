@@ -1,4 +1,4 @@
-@import "primereact/resources/themes/lara-light-blue/theme.css";
+/* Theme is now handled dynamically via ThemeContext */
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
 @import "primeflex/primeflex.css";

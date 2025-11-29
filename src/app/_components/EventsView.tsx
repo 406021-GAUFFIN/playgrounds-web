@@ -8,6 +8,7 @@ import { classNames } from "primereact/utils";
 import { EventDetailModal } from "./EventDetailModal";
 import { EventActions } from "./EventActions";
 import { useState } from "react";
+import { SportBadge } from "../../components/common/SportBadge";
 
 interface EventsViewProps {
   events: Event[];
@@ -77,10 +78,7 @@ export const EventsView = ({
                 <span>{event.space.name}</span>
               </div>
               <div className="flex align-items-center gap-2">
-                <div
-                  dangerouslySetInnerHTML={{ __html: event.sport.pictogram }}
-                />
-                <span>{event.sport.name}</span>
+                <SportBadge key={event.sport.id} sport={event.sport} />
               </div>
               <div className="flex align-items-center gap-2">
                 <i className="pi pi-users"></i>

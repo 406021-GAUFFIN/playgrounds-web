@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L, { Icon } from "leaflet";
+import { useTheme } from "@/context/ThemeContext";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -69,6 +70,7 @@ const MapComponentClient = ({
   height = "300px",
 }: MapComponentProps) => {
   const mapRef = useRef<L.Map>(null);
+  const { theme } = useTheme();
 
   return (
     <div style={{ height, width: "100%" }} className="border-1 border-round">
@@ -79,8 +81,16 @@ const MapComponentClient = ({
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={
+            theme === "dark"
+              ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+          url={
+            theme === "dark"
+              ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          }
         />
         <LocationMarker onLocationSelect={onLocationSelect} />
       </MapContainer>

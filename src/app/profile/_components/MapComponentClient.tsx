@@ -8,6 +8,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L, { Icon } from "leaflet";
+import { useTheme } from "@/context/ThemeContext";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -117,7 +118,6 @@ const MapComponentClient = ({
         map.scrollWheelZoom.enable();
         map.boxZoom.enable();
         map.keyboard.enable();
-   
       } else {
         map.dragging.disable();
         map.touchZoom.disable();
@@ -131,6 +131,8 @@ const MapComponentClient = ({
       map.invalidateSize();
     }
   }, [interactive]);
+
+  const { theme } = useTheme();
 
   return (
     <div style={{ height, width: "100%" }} className="border-1 border-round">
@@ -148,8 +150,16 @@ const MapComponentClient = ({
         keyboard={interactive}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={
+            theme === "dark"
+              ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+          url={
+            theme === "dark"
+              ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          }
         />
         <LocationMarker
           onLocationSelect={onLocationSelect}

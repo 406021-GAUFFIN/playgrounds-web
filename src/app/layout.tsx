@@ -5,6 +5,7 @@ import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import { PrimeReactProvider } from "primereact/api";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { usePathname } from "next/navigation";
 import { publicRoutes } from "@/const/publicRoutes.const";
 
@@ -35,7 +36,9 @@ export default function RootLayout({
       <body className="m-0 p-0">
         <PrimeReactProvider value={config}>
           <AuthProvider>
-            <LayoutContent>{children}</LayoutContent>
+            <ThemeProvider>
+              <LayoutContent>{children}</LayoutContent>
+            </ThemeProvider>
           </AuthProvider>
         </PrimeReactProvider>
       </body>

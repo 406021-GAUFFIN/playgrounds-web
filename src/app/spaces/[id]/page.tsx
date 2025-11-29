@@ -94,7 +94,7 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
     <main className="container mx-auto p-4 space-y-4">
       <Toast ref={toast} />
       <ConfirmDialog />
-      <h1 className="text-3xl font-bold text-gray-800">{space.name}</h1>
+      <h1 className="text-3xl font-bold">{space.name}</h1>
       <div className="grid nested-grid">
         <div className="col-12 md:col-6">
           <div className="grid">

@@ -20,12 +20,14 @@
 
 h1 {
   font-size: 1.5em;
+  color: var(--text-color);
 }
 
 footer {
-  color: #fff;
+  color: var(--text-color);
   padding: 20px;
   text-align: center;
+  background-color: var(--surface-section);
 }
 
 /* PRESENTACION */
@@ -34,11 +36,11 @@ footer {
   flex-wrap: wrap;
   justify-content: center;
   gap: 2rem;
-  background-color: #f9f9f9;
+  background-color: var(--surface-ground);
 }
 
 .bgGray {
-  background-color: #f9f9f9;
+  background-color: var(--surface-ground);
 }
 
 .presentation-card {
@@ -50,25 +52,27 @@ footer {
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 2rem;
-  background-color: #ffffff;
+  background-color: var(--surface-card);
+  color: var(--text-color);
 }
 
 .custom-panel {
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 2rem;
-  background-color: #ffffff;
+  background-color: var(--surface-card);
+  color: var(--text-color);
 }
 
 .custom-button {
-  border-color: #f4b400;
-  color: #f4b400;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .custom-button:hover {
-  background-color: #f4b400;
-  border-color: #f4b400;
-  color: #ffffff;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--primary-color-text);
 }
 
 .presentation-divider {
@@ -77,12 +81,12 @@ footer {
 }
 
 .custom-divider {
-  border-left: 2px solid #f4b400;
+  border-left: 2px solid var(--primary-color);
   height: 100%;
 }
 
 .custom-divider-horizontal {
-  border-top: 2px solid #f4b400;
+  border-top: 2px solid var(--primary-color);
 }
 
 .custom-panel-header {
@@ -92,12 +96,12 @@ footer {
 }
 
 .custom-avatar {
-  border: 2px solid #f4b400;
+  border: 2px solid var(--primary-color);
 }
 
 .custom-panel-title {
   margin: 0;
-  color: #333;
+  color: var(--text-color);
 }
 
 .width-input {
@@ -131,4 +135,16 @@ footer {
 .imageDonationPaypal {
   width: 130px;
   margin-left: 20px;
+}
+
+/* Dark mode overrides for Leaflet */
+body.dark-mode .leaflet-control-zoom a {
+  background-color: var(--surface-card) !important;
+  color: var(--text-color) !important;
+  border-color: var(--surface-border) !important;
+}
+
+body.dark-mode .leaflet-control-zoom a:hover {
+  background-color: var(--surface-hover) !important;
+  color: var(--text-color) !important;
 }

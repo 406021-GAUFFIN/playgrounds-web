@@ -6,7 +6,8 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
+import { SportBadge } from "@/components/common/SportBadge";
 import { PaginatedResponse } from "@/types/pagination";
 import { formatDate } from "@/utils/dateUtils";
 import { IconField } from "primereact/iconfield";
@@ -69,16 +70,7 @@ const Page = () => {
       <div className="flex flex-wrap gap-2">
         {rowData.sports && rowData.sports.length > 0 ? (
           rowData.sports.map((sport: Sport) => (
-            <div
-              key={sport.id}
-              className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full"
-            >
-              <div
-                className="w-6 h-6"
-                dangerouslySetInnerHTML={{ __html: sport.pictogram }}
-              />
-              <span>{sport.name}</span>
-            </div>
+            <SportBadge key={sport.id} sport={sport} />
           ))
         ) : (
           <div>Sin deportes</div>

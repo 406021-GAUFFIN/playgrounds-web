@@ -25,8 +25,8 @@ export default function FAQPage() {
   }, [searchTerm]);
 
   return (
-    <div className="flex align-items-center justify-content-center min-h-screen">
-      <div className="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div className="flex flex-column align-items-center justify-content-center h-screen p-4 overflow-hidden">
+      <div className="surface-card p-4 shadow-2 border-round w-full lg:w-6 h-full overflow-y-auto">
         <div className="flex flex-column align-items-center mb-4">
           <div className="flex align-items-center gap-2 mb-2">
             <Image

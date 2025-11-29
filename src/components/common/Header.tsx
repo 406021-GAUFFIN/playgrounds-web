@@ -1,6 +1,7 @@
 "use client";
 import { Menubar } from "primereact/menubar";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Button } from "primereact/button";
 import { Sidebar } from "primereact/sidebar";
 import { Menu } from "primereact/menu";
@@ -30,7 +31,6 @@ const Header = () => {
 
   // Items base que todos los usuarios pueden ver
   const baseItems = [
-    
     {
       label: "Inicio",
       icon: "pi pi-fw pi-home",
@@ -100,41 +100,49 @@ const Header = () => {
     </div>
   );
 
+  const { theme, toggleTheme } = useTheme();
+
   const end = (
     <div className="flex align-items-center gap-2">
+      <Button
+        icon={theme === "dark" ? "pi pi-sun" : "pi pi-moon"}
+        onClick={toggleTheme}
+        rounded
+        text
+        severity="secondary"
+        aria-label="Toggle Theme"
+      />
       <div
         className="cursor-pointer"
         onClick={() => handleNavigation("/profile")}
       >
         <Avatar
           label={getInitials(user?.name || "")}
-          style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
+          style={{
+            backgroundColor: "var(--primary-color)",
+            color: "var(--primary-color-text)",
+          }}
           shape="circle"
         />
       </div>
     </div>
   );
 
-  const customSidenavHeader= (
-
-          <div className="flex flex-column">
-            <div className="flex align-items-center gap-2">
-              <Image
-                src="/logo-medium.webp"
-                alt="Logo Playgrounds"
-                width={28}
-                height={28}
-                priority
-                className="rounded-full"
-              />
-              <span className="font-bold text-lg">Playgrounds</span>
-            </div>
-          </div>
-
-  )
-   
-
- 
+  const customSidenavHeader = (
+    <div className="flex flex-column">
+      <div className="flex align-items-center gap-2">
+        <Image
+          src="/logo-medium.webp"
+          alt="Logo Playgrounds"
+          width={28}
+          height={28}
+          priority
+          className="rounded-full"
+        />
+        <span className="font-bold text-lg">Playgrounds</span>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -159,7 +167,10 @@ const Header = () => {
             <div className="flex align-items-center gap-2">
               <Avatar
                 label={getInitials(user?.name || "")}
-                style={{ backgroundColor: "#2196F3", color: "#ffffff" }}
+                style={{
+                  backgroundColor: "var(--primary-color)",
+                  color: "var(--primary-color-text)",
+                }}
                 shape="circle"
               />
               <div className="flex flex-column">

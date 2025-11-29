@@ -6,6 +6,7 @@ import { Space } from "./_types";
 import { spaceService } from "./services/spaceService";
 import MapComponent from "./components/MapComponentLoader";
 import { Button } from "primereact/button";
+import { SportBadge } from "@/components/common/SportBadge";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -87,18 +88,20 @@ export default function Home() {
     <main className="flex flex-column flex-1 h-full overflow-hidden">
       <div className="flex-1 relative border-1 border-round m-3">
         <div
-          className="absolute top-0 left-50 p-3 bg-white shadow-3 border-round flex flex-column gap-1 mt-3"
+          className="absolute top-0 left-50 p-3 surface-card shadow-3 border-round flex flex-column gap-1 mt-3"
           style={{ transform: "translateX(-50%)", zIndex: 1000 }}
         >
-          <h3 className="font-bold text-gray-800 m-0 text-base text-center">
+          <h3 className="font-bold text-color m-0 text-base text-center">
             Espacios cerca tuyo
           </h3>
           {spaces.length > 0 ? (
-            <p className="text-sm text-gray-600 m-0 text-center">
+            <p className="text-sm text-color-secondary m-0 text-center">
               Mostrando {spaces.length} espacios de {Math.min(totalSpaces, 30)}
             </p>
           ) : (
-            <p className="text-sm text-gray-600 m-0 text-center">No hay espacios</p>
+            <p className="text-sm text-color-secondary m-0 text-center">
+              No hay espacios
+            </p>
           )}
         </div>
 
@@ -120,7 +123,7 @@ export default function Home() {
         keepInViewport={true}
         baseZIndex={2147483647}
         draggable={false}
-        resizable={false} 
+        resizable={false}
         footer={
           <div className="flex justify-content-center align-items-center">
             <Button
@@ -143,16 +146,7 @@ export default function Home() {
               <h3 className="font-semibold">Deportes</h3>
               <div className="flex flex-wrap gap-2">
                 {selectedSpace.sports.map((sport) => (
-                  <div
-                    key={sport.id}
-                    className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full"
-                  >
-                    <div
-                      className="w-6 h-6"
-                      dangerouslySetInnerHTML={{ __html: sport.pictogram }}
-                    />
-                    <span>{sport.name}</span>
-                  </div>
+                  <SportBadge key={sport.id} sport={sport} />
                 ))}
               </div>
             </div>
@@ -174,8 +168,6 @@ export default function Home() {
           </div>
         )}
       </Dialog>
-
-  
     </main>
   );
 }

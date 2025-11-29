@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Space } from "../../_types";
+import { useTheme } from "@/context/ThemeContext";
 
 // Fix para los íconos de Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -33,6 +34,8 @@ function MapEvents() {
 }
 
 export default function SpaceMap({ space }: SpaceMapProps) {
+  const { theme } = useTheme();
+
   return (
     <div style={{ height: "200px", width: "100%", position: "relative" }}>
       <MapContainer
@@ -46,8 +49,16 @@ export default function SpaceMap({ space }: SpaceMapProps) {
         zoomControl={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={
+            theme === "dark"
+              ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+          url={
+            theme === "dark"
+              ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          }
         />
         <MapEvents />
         <Marker position={[space.latitude, space.longitude]}>

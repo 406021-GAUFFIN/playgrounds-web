@@ -9,7 +9,9 @@ interface WeeklyStatsCardsProps {
   weeklyStats: WeeklyStats;
 }
 
-export default function WeeklyStatsCards({ weeklyStats }: WeeklyStatsCardsProps) {
+export default function WeeklyStatsCards({
+  weeklyStats,
+}: WeeklyStatsCardsProps) {
   const getSportColor = (index: number) => {
     const colors = [
       "rgba(54, 162, 235, 1)",
@@ -27,14 +29,12 @@ export default function WeeklyStatsCards({ weeklyStats }: WeeklyStatsCardsProps)
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
       <Card>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Deportes Más Populares
-        </h3>
+        <h3 className="text-lg font-semibold mb-4">Deportes Más Populares</h3>
         <div className="space-y-2">
           {weeklyStats.topSports.map((sport, index) => (
             <div
               key={sport.sportId}
-              className="flex justify-content-between flex-wrap items-center p-3 bg-gray-50 rounded-lg"
+              className="flex justify-content-between flex-wrap items-center p-3  rounded-lg"
             >
               <div className="flex items-center gap-3">
                 <div
@@ -43,23 +43,19 @@ export default function WeeklyStatsCards({ weeklyStats }: WeeklyStatsCardsProps)
                 ></div>
                 <span className="font-medium">{sport.sportName}</span>
               </div>
-              <span className="text-lg font-bold text-gray-800">
-                {sport.eventCount}
-              </span>
+              <span className="text-lg font-bold">{sport.eventCount}</span>
             </div>
           ))}
         </div>
       </Card>
 
       <Card>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Resumen Diario
-        </h3>
+        <h3 className="text-lg font-semibold mb-4">Resumen Diario</h3>
         <div className="space-y-2">
           {weeklyStats.dailyStats.map((day) => (
             <div
               key={day.date}
-              className="flex justify-content-between flex-wrap p-3 bg-gray-50 rounded-lg"
+              className="flex justify-content-between flex-wrap p-3 rounded-lg"
             >
               <div>
                 <div className="font-medium">
@@ -67,17 +63,15 @@ export default function WeeklyStatsCards({ weeklyStats }: WeeklyStatsCardsProps)
                 </div>
                 <div className="text-sm text-gray-600">
                   {day.eventsBySport.length > 0
-                    ? day.eventsBySport.map(s => s.sportName).join(", ")
+                    ? day.eventsBySport.map((s) => s.sportName).join(", ")
                     : "Sin eventos"}
                 </div>
               </div>
-              <span className="text-lg font-bold text-gray-800">
-                {day.totalEvents}
-              </span>
+              <span className="text-lg font-bold">{day.totalEvents}</span>
             </div>
           ))}
         </div>
       </Card>
     </div>
   );
-} 
+}

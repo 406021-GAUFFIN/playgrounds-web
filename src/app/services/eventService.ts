@@ -1,4 +1,4 @@
-import { Space } from "../_types";
+import { Space, Sport } from "../_types";
 import { PaginatedResponse } from "./_types";
 
 export interface Event {
@@ -17,13 +17,7 @@ export interface Event {
     email: string;
   };
   space: Space;
-  sport: {
-    id: number;
-    name: string;
-    pictogram: string;
-    minParticipants: number;
-    maxParticipants: number;
-  };
+  sport: Sport;
   participants: {
     id: number;
     name: string;

@@ -1,5 +1,6 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const router = useRouter();
   const toast = useRef<Toast>(null);
 
@@ -121,6 +123,16 @@ export default function LoginPage() {
             />
           </form>
         </div>
+      </div>
+      <div className="fixed top-0 right-0 p-3">
+        <Button
+          icon={theme === "dark" ? "pi pi-sun" : "pi pi-moon"}
+          onClick={toggleTheme}
+          rounded
+          text
+          severity="secondary"
+          aria-label="Toggle Theme"
+        />
       </div>
       <AuthFooter />
     </>

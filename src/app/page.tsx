@@ -2,12 +2,17 @@
 import { useEffect, useState, useRef } from "react";
 import { Dialog } from "primereact/dialog";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { Space } from "./_types";
+import { Space, Sport, Accessibility } from "./_types";
 import { spaceService } from "./services/spaceService";
+import { sportService } from "./services/sportService";
+import { accessibilityService } from "./services/accessibilityService";
 import MapComponent from "./components/MapComponentLoader";
 import { Button } from "primereact/button";
+import { MultiSelect } from "primereact/multiselect";
 import { SportBadge } from "@/components/common/SportBadge";
 import { useRouter } from "next/navigation";
+import { Chip } from "primereact/chip";
+import { InputSwitch } from "primereact/inputswitch";
 
 export default function Home() {
   const router = useRouter();
@@ -25,9 +30,50 @@ export default function Home() {
     minLng: number;
     maxLng: number;
   } | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [sports, setSports] = useState<Sport[]>([]);
+  const [selectedSports, setSelectedSports] = useState<number[]>([]);
+  const [loadingSports, setLoadingSports] = useState(false);
+  const [accessibilities, setAccessibilities] = useState<Accessibility[]>([]);
+  const [selectedAccessibilities, setSelectedAccessibilities] = useState<
+    number[]
+  >([]);
+  const [hasFutureEvents, setHasFutureEvents] = useState(false);
+  const [minRating, setMinRating] = useState<number>(0);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [loadingAccessibilities, setLoadingAccessibilities] = useState(false);
 
   // Ref para el timeout del debounce
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    loadSports();
+    loadAccessibilities();
+  }, []);
+
+  const loadSports = async () => {
+    setLoadingSports(true);
+    try {
+      const data = await sportService.getSports();
+      setSports(data);
+    } catch (error) {
+      console.error("Error loading sports:", error);
+    } finally {
+      setLoadingSports(false);
+    }
+  };
+
+  const loadAccessibilities = async () => {
+    setLoadingAccessibilities(true);
+    try {
+      const data = await accessibilityService.getAccessibilities();
+      setAccessibilities(data);
+    } catch (error) {
+      console.error("Error loading accessibilities:", error);
+    } finally {
+      setLoadingAccessibilities(false);
+    }
+  };
 
   // Request user location on mount
   useEffect(() => {
@@ -59,6 +105,13 @@ export default function Home() {
         maxLat: bounds.maxLat,
         minLng: bounds.minLng,
         maxLng: bounds.maxLng,
+        hasFutureEvents,
+        sportIds: selectedSports.length > 0 ? selectedSports : undefined,
+        accessibilityIds:
+          selectedAccessibilities.length > 0
+            ? selectedAccessibilities
+            : undefined,
+        minRating: minRating > 0 ? minRating : undefined,
       });
       setSpaces(data.data || []);
       setTotalSpaces(data.total || 0);
@@ -73,7 +126,13 @@ export default function Home() {
 
   useEffect(() => {
     loadSpaces();
-  }, [bounds]);
+  }, [
+    bounds,
+    selectedSports,
+    selectedAccessibilities,
+    hasFutureEvents,
+    minRating,
+  ]);
 
   // Función para comparar bounds
   const areBoundsEqual = (a: typeof bounds, b: typeof bounds) => {
@@ -132,9 +191,126 @@ export default function Home() {
     });
   };
 
+  const sportTemplate = (option: Sport | number) => {
+    const sport =
+      typeof option === "number" ? sports.find((s) => s.id === option) : option;
+
+    if (!sport) return null;
+
+    return (
+      <div className="flex align-items-center gap-2">
+        {sport.pictogram && (
+          <div
+            className="w-6 h-6"
+            dangerouslySetInnerHTML={{ __html: sport.pictogram }}
+          />
+        )}
+        <span>{sport.name || "Sin nombre"}</span>
+      </div>
+    );
+  };
+
+  const accessibilityTemplate = (option: Accessibility | number) => {
+    const accessibility =
+      typeof option === "number"
+        ? accessibilities.find((a) => a.id === option)
+        : option;
+
+    if (!accessibility) return null;
+
+    return (
+      <div className="flex align-items-center gap-2">
+        <span>{accessibility.name || "Sin nombre"}</span>
+      </div>
+    );
+  };
+
   return (
-    <main className="flex flex-column flex-1 h-full overflow-hidden">
-      <div className="flex-1 relative border-1 border-round m-3">
+    <main className="flex flex-column flex-1 h-full overflow-hidden relative">
+      <div
+        className={`w-full transition-all duration-300 ease-in-out overflow-hidden ${
+          showFilters
+            ? "max-h-20rem p-3 border-bottom-1 surface-border"
+            : "max-h-0"
+        } surface-card`}
+      >
+        <div className="flex flex-wrap gap-3 align-items-center">
+          <MultiSelect
+            value={selectedSports}
+            options={sports}
+            onChange={(e) => setSelectedSports(e.value)}
+            optionLabel="name"
+            optionValue="id"
+            itemTemplate={sportTemplate}
+            placeholder="Filtrar por deporte"
+            className="w-full md:w-auto md:flex-1"
+            disabled={loadingSports}
+            display="chip"
+          />
+          <MultiSelect
+            value={selectedAccessibilities}
+            options={accessibilities}
+            onChange={(e) => setSelectedAccessibilities(e.value)}
+            optionLabel="name"
+            optionValue="id"
+            itemTemplate={accessibilityTemplate}
+            placeholder="Filtrar por accesibilidad"
+            className="w-full md:w-auto md:flex-1"
+            disabled={loadingAccessibilities}
+            display="chip"
+          />
+
+          <div className="flex align-items-center gap-2">
+            <InputSwitch
+              checked={hasFutureEvents}
+              onChange={(e) => setHasFutureEvents(e.value)}
+            />
+            <label
+              className="cursor-pointer"
+              onClick={() => setHasFutureEvents(!hasFutureEvents)}
+            >
+              Eventos futuros
+            </label>
+          </div>
+
+          <div className="flex align-items-center gap-2">
+            <span className="font-semibold">Calificación:</span>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <i
+                  key={star}
+                  className={`pi ${
+                    star <= (hoveredRating || minRating)
+                      ? "pi-star-fill"
+                      : "pi-star"
+                  } text-xl cursor-pointer transition-colors ${
+                    star <= (hoveredRating || minRating)
+                      ? "text-yellow-500"
+                      : "text-gray-300"
+                  }`}
+                  onClick={() =>
+                    setMinRating((prev) => (prev === star ? 0 : star))
+                  }
+                  onMouseEnter={() => setHoveredRating(star)}
+                  onMouseLeave={() => setHoveredRating(0)}
+                ></i>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 relative border-1 border-round m-3 overflow-hidden">
+        <Button
+          icon="pi pi-filter"
+          rounded
+          className="absolute top-0 right-0 m-3 shadow-2"
+          style={{ zIndex: 1000 }}
+          onClick={() => setShowFilters(!showFilters)}
+          tooltip="Filtros"
+          tooltipOptions={{ position: "left" }}
+        />
+
         <div
           className="absolute top-0 left-50 p-3 surface-card shadow-3 border-round flex flex-column gap-1 mt-3"
           style={{ transform: "translateX(-50%)", zIndex: 1000 }}
@@ -202,7 +378,13 @@ export default function Home() {
             </div>
             <div>
               <h3 className="font-semibold">Accesibilidad</h3>
-              <p>{selectedSpace.isAccessible ? "Accesible" : "No accesible"}</p>
+              <div className="flex flex-wrap gap-2">
+                {selectedSpace.accessibilities.length > 0
+                  ? selectedSpace.accessibilities.map((accessibility) => (
+                      <Chip key={accessibility.id} label={accessibility.name} />
+                    ))
+                  : "Sin accesibilidad"}
+              </div>
             </div>
             <div>
               <h3 className="font-semibold">Calificación promedio</h3>

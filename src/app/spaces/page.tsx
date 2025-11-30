@@ -14,10 +14,11 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { EditUserModal } from "@/components/users/EditUserModal";
 import { CreateUserModal } from "@/components/users/CreateUserModal";
-import { Space, Sport } from "./_types";
+import { Accessibility, Space, Sport } from "./_types";
 import { EditSpaceModal } from "./_components/EditSpaceModal";
 import { CreateSpaceModal } from "./_components/CreateSpaceModal";
 import { spaceService } from "../services/spaceService";
+import { Chip } from "primereact/chip";
 
 const Page = () => {
   const { user } = useRequireAuth(["ADMIN"]);
@@ -78,6 +79,19 @@ const Page = () => {
       </div>
     );
   };
+  const accessibilityTemplate = (rowData: Space) => {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {rowData.accessibilities && rowData.accessibilities.length > 0 ? (
+          rowData.accessibilities.map((accessibility: Accessibility) => (
+            <Chip key={accessibility.id} label={accessibility.name} />
+          ))
+        ) : (
+          <div>Sin accesibilidad</div>
+        )}
+      </div>
+    );
+  };
 
   const statusTemplate = (rowData: Space) => {
     return (
@@ -89,20 +103,6 @@ const Page = () => {
         }`}
       >
         {rowData.isActive ? "Activo" : "Inactivo"}
-      </span>
-    );
-  };
-
-  const accessibleTemplate = (rowData: Space) => {
-    return (
-      <span
-        className={`px-2 py-1 rounded-full text-sm ${
-          rowData.isAccessible
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-        }`}
-      >
-        {rowData.isAccessible ? "Sí" : "No"}
       </span>
     );
   };
@@ -176,12 +176,13 @@ const Page = () => {
         <Column field="name" header="Nombre" />
         <Column field="address" header="Dirección" />
         <Column field="sports" header="Deportes" body={sportTemplate} />
-        <Column field="isActive" header="Estado" body={statusTemplate} />
         <Column
-          field="isAccessible"
-          header="Accesible"
-          body={accessibleTemplate}
+          field="accessibilities"
+          header="Accesibilidad"
+          body={accessibilityTemplate}
         />
+        <Column field="isActive" header="Estado" body={statusTemplate} />
+
         <Column body={actionsTemplate} style={{ width: "4rem" }} />
       </DataTable>
 

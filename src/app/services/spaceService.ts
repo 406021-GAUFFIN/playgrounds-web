@@ -10,6 +10,10 @@ interface GetSpacesParams {
   maxLat?: number;
   minLng?: number;
   maxLng?: number;
+  sportIds?: number[];
+  accessibilityIds?: number[];
+  hasFutureEvents?: boolean;
+  minRating?: number;
 }
 
 export const spaceService = {
@@ -28,6 +32,18 @@ export const spaceService = {
     if (params.maxLat) queryParams.append("maxLat", params.maxLat.toString());
     if (params.minLng) queryParams.append("minLng", params.minLng.toString());
     if (params.maxLng) queryParams.append("maxLng", params.maxLng.toString());
+    if (params.sportIds)
+      params.sportIds.forEach((id) =>
+        queryParams.append("sportIds", id.toString())
+      );
+    if (params.accessibilityIds)
+      params.accessibilityIds.forEach((id) =>
+        queryParams.append("accessibilityIds", id.toString())
+      );
+    if (params.hasFutureEvents !== undefined)
+      queryParams.append("hasFutureEvents", params.hasFutureEvents.toString());
+    if (params.minRating)
+      queryParams.append("minRating", params.minRating.toString());
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/spaces?${queryParams}`,

@@ -12,12 +12,16 @@ export interface Rating extends BaseEntity {
   };
 }
 
+export interface Accessibility extends BaseEntity {
+  name: string;
+  description: string;
+}
+
 export interface Space extends BaseEntity {
   name: string;
   address: string;
   schedule: string;
   conditions: string;
-  isAccessible: boolean;
   description: string;
   isActive: boolean;
   latitude: number;
@@ -25,6 +29,7 @@ export interface Space extends BaseEntity {
   sports: Sport[];
   averageRating: number | null;
   ratings: Rating[];
+  accessibilities: Accessibility[];
 }
 
 export interface Sport extends BaseEntity {

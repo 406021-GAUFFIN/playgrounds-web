@@ -8,6 +8,11 @@ export interface Sport extends BaseEntity {
   maxParticipants: number;
 }
 
+export interface Accessibility extends BaseEntity {
+  name: string;
+  description: string;
+}
+
 export interface Space extends BaseEntity {
   name: string;
   address: string;
@@ -21,4 +26,5 @@ export interface Space extends BaseEntity {
   sports: Sport[];
   averageRating: number | null;
   ratings: Rating[];
+  accessibilities: Accessibility[];
 }

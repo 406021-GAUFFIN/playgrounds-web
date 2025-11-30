@@ -8,9 +8,11 @@ import { Toast } from "primereact/toast";
 import { useRef } from "react";
 import { Button } from "primereact/button";
 import { formatDate } from "@/utils/dateUtils";
-import { Space, Sport } from "../_types";
+import { Accessibility, Space, Sport } from "../_types";
 import MapComponent from "./MapComponent";
 import Image from "next/image";
+import { accessibilityService } from "../../services/accessibilityService";
+import { spaceService } from "../../services/spaceService";
 
 interface EditSpaceModalProps {
   visible: boolean;
@@ -27,8 +29,10 @@ export const EditSpaceModal = ({
 }: EditSpaceModalProps) => {
   const [loading, setLoading] = useState(false);
   const [loadingSports, setLoadingSports] = useState(false);
+  const [loadingAccessibilities, setLoadingAccessibilities] = useState(false);
   const [space, setSpace] = useState<Space | null>(null);
   const [sports, setSports] = useState<Sport[]>([]);
+  const [accessibilities, setAccessibilities] = useState<Accessibility[]>([]);
   const toast = useRef<Toast>(null);
 
   const loadSports = async () => {
@@ -60,25 +64,28 @@ export const EditSpaceModal = ({
     }
   };
 
+  const loadAccessibilities = async () => {
+    setLoadingAccessibilities(true);
+    try {
+      const data = await accessibilityService.getAccessibilities();
+      setAccessibilities(data);
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: "No se pudieron cargar las accesibilidades",
+      });
+    } finally {
+      setLoadingAccessibilities(false);
+    }
+  };
+
   const loadSpace = async () => {
     if (!spaceId) return;
 
     setLoading(true);
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/spaces/${spaceId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              document.cookie.split("token=")[1].split(";")[0]
-            }`,
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error("Error al cargar el espacio");
-
-      const data = await response.json();
+      const data = await spaceService.getSpaceById(spaceId.toString());
       setSpace(data);
     } catch (error) {
       toast.current?.show({
@@ -94,6 +101,7 @@ export const EditSpaceModal = ({
   useEffect(() => {
     if (visible) {
       loadSports();
+      loadAccessibilities();
       if (spaceId) {
         loadSpace();
       }
@@ -160,7 +168,6 @@ export const EditSpaceModal = ({
       typeof option === "number" ? sports.find((s) => s.id === option) : option;
 
     if (!sport) return null;
-
 
     return (
       <div className="flex align-items-center gap-2">
@@ -326,19 +333,26 @@ export const EditSpaceModal = ({
             />
           )}
         </div>
-
-        <div className="field-checkbox mb-4">
-          <label htmlFor="isAccessible" className="font-bold">
-            Accesible
+        <div className="field mb-4">
+          <label htmlFor="accessibilities" className="font-bold">
+            Accesibilidad
           </label>
-          <input
-            type="checkbox"
-            id="isAccessible"
-            checked={space.isAccessible}
-            onChange={(e) =>
-              setSpace({ ...space, isAccessible: e.target.checked })
-            }
-          />
+          {loadingAccessibilities ? (
+            <div className="flex align-items-center justify-content-center p-3 border-1 border-round">
+              <ProgressSpinner style={{ width: "30px", height: "30px" }} />
+            </div>
+          ) : (
+            <MultiSelect
+              id="accesibilities"
+              value={space.accessibilities}
+              options={accessibilities}
+              onChange={(e) => setSpace({ ...space, accessibilities: e.value })}
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Seleccione las accesibilidades"
+              className="w-full"
+            />
+          )}
         </div>
 
         <div className="field-checkbox mb-4">

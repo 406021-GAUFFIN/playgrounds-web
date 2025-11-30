@@ -83,7 +83,7 @@ export default function SpaceRatings({
                             </span>
                           )}
                         </span>
-                        <span className="text-gray-500 text-sm">
+                        <span className="text-sm">
                           {format(
                             new Date(rating.createdAt),
                             "dd 'de' MMMM 'de' yyyy",
@@ -108,15 +108,7 @@ export default function SpaceRatings({
                         </div>
                       </div>
                     </div>
-                    <p
-                      className={`mt-2 ${
-                        rating.comment
-                          ? "text-gray-700"
-                          : "text-gray-400 italic"
-                      }`}
-                    >
-                      {rating.comment || "Sin comentario"}
-                    </p>
+                    <p className={`mt-2`}>{rating.comment || "Sin comentario"}</p>
                     {rating.user.id === user?.id && (
                       <div className="flex justify-content-end flex-wrap">
                         <Button

@@ -4,12 +4,14 @@ import { MultiSelect } from "primereact/multiselect";
 import { Card } from "primereact/card";
 import { TabView, TabPanel } from "primereact/tabview";
 import { InputSwitch } from "primereact/inputswitch";
+import { InputNumber } from "primereact/inputnumber";
 import { eventService, Event } from "../services/eventService";
 import { useAuth } from "../../context/AuthContext";
 import { EventsView } from "../_components/EventsView";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { sportService } from "../services/sportService";
 import { Sport } from "../_types";
+import { SportIcon } from "@/components/common/SportIcon";
 
 const EVENT_STATUS = [
   { label: "Disponible", value: "available" },
@@ -17,6 +19,11 @@ const EVENT_STATUS = [
   { label: "Cancelado", value: "cancelled" },
   { label: "Finalizado", value: "finished" },
   { label: "Suspendido", value: "suspended" },
+];
+
+const DISCOVER_STATUS_OPTIONS = [
+  { label: "Disponible", value: "available" },
+  { label: "Confirmado", value: "confirmed" },
 ];
 
 interface EventsListProps {
@@ -38,6 +45,7 @@ const EventsList = ({ mode }: EventsListProps) => {
     lat: number;
     lng: number;
   } | null>(null);
+  const [minParticipants, setMinParticipants] = useState<number | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -48,7 +56,16 @@ const EventsList = ({ mode }: EventsListProps) => {
 
   useEffect(() => {
     loadEvents();
-  }, [page, pageSize, selectedStatus, selectedSports, nearMe, user?.id, mode]);
+  }, [
+    page,
+    pageSize,
+    selectedStatus,
+    selectedSports,
+    nearMe,
+    user?.id,
+    mode,
+    minParticipants,
+  ]);
 
   const loadSports = async () => {
     setLoadingSports(true);
@@ -114,7 +131,10 @@ const EventsList = ({ mode }: EventsListProps) => {
         params.status = selectedStatus.length > 0 ? selectedStatus : undefined;
       } else {
         // discover mode
-        params.status = ["available", "confirmed"];
+        params.status =
+          selectedStatus.length > 0
+            ? selectedStatus
+            : ["available", "confirmed"];
         params.participantToExcludeId = user.id;
         if (selectedSports.length > 0) {
           params.sportIds = selectedSports;
@@ -123,6 +143,9 @@ const EventsList = ({ mode }: EventsListProps) => {
           params.latitude = userLocation.lat;
           params.longitude = userLocation.lng;
           params.sortByDistance = "ASC";
+        }
+        if (minParticipants) {
+          params.minParticipants = minParticipants;
         }
       }
 
@@ -145,9 +168,10 @@ const EventsList = ({ mode }: EventsListProps) => {
     return (
       <div className="flex align-items-center gap-2">
         {sport.pictogram && (
-          <div
-            className="w-6 h-6"
-            dangerouslySetInnerHTML={{ __html: sport.pictogram }}
+          <SportIcon
+            pictogram={sport.pictogram}
+            className=""
+            style={{ width: "1.5rem", height: "1.5rem" }}
           />
         )}
         <span>{sport.name || "Sin nombre"}</span>
@@ -157,7 +181,13 @@ const EventsList = ({ mode }: EventsListProps) => {
 
   return (
     <Card className="w-full min-h-[60vh]">
-      <div className="mb-4 flex flex-column gap-3">
+      <div
+        className={`mb-4 gap-4 ${
+          mode === "discover"
+            ? "grid grid-cols-2 md:flex md:flex-row md:align-items-center"
+            : "flex flex-column"
+        }`}
+      >
         {mode === "my-events" ? (
           <MultiSelect
             value={selectedStatus}
@@ -168,18 +198,40 @@ const EventsList = ({ mode }: EventsListProps) => {
           />
         ) : (
           <>
-            <MultiSelect
-              value={selectedSports}
-              options={sports}
-              onChange={(e) => setSelectedSports(e.value)}
-              optionLabel="name"
-              optionValue="id"
-              itemTemplate={sportTemplate}
-              selectedItemTemplate={sportTemplate}
-              placeholder="Filtrar por deporte"
-              className="w-full md:w-20rem"
-              disabled={loadingSports}
-            />
+            <div className="w-full md:w-11rem">
+              <MultiSelect
+                value={selectedStatus}
+                options={DISCOVER_STATUS_OPTIONS}
+                onChange={(e) => setSelectedStatus(e.value)}
+                placeholder="Estado"
+                className="w-full"
+                display="chip"
+              />
+            </div>
+            <div className="w-full md:w-11rem">
+              <InputNumber
+                value={minParticipants}
+                onValueChange={(e) => setMinParticipants(e.value ?? null)}
+                placeholder="Min. Participantes"
+                className="w-full"
+                inputClassName="w-full"
+                min={0}
+                showButtons
+              />
+            </div>
+            <div className="w-full md:w-13rem">
+              <MultiSelect
+                value={selectedSports}
+                options={sports}
+                onChange={(e) => setSelectedSports(e.value)}
+                optionLabel="name"
+                optionValue="id"
+                itemTemplate={sportTemplate}
+                placeholder="Filtrar por deporte"
+                className="w-full"
+                disabled={loadingSports}
+              />
+            </div>
             <div className="flex align-items-center gap-2">
               <InputSwitch
                 checked={nearMe}

@@ -10,6 +10,7 @@ import MapComponent from "./components/MapComponentLoader";
 import { Button } from "primereact/button";
 import { MultiSelect } from "primereact/multiselect";
 import { SportBadge } from "@/components/common/SportBadge";
+import { SportIcon } from "@/components/common/SportIcon";
 import { useRouter } from "next/navigation";
 import { Chip } from "primereact/chip";
 import { InputSwitch } from "primereact/inputswitch";
@@ -200,9 +201,10 @@ export default function Home() {
     return (
       <div className="flex align-items-center gap-2">
         {sport.pictogram && (
-          <div
-            className="w-6 h-6"
-            dangerouslySetInnerHTML={{ __html: sport.pictogram }}
+          <SportIcon
+            pictogram={sport.pictogram}
+            className=""
+            style={{ width: "1.5rem", height: "1.5rem" }}
           />
         )}
         <span>{sport.name || "Sin nombre"}</span>

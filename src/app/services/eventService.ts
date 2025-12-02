@@ -38,6 +38,7 @@ export interface GetEventsParams {
   latitude?: number;
   longitude?: number;
   sortByDistance?: "ASC" | "DESC";
+  minParticipants?: number;
 }
 
 export const eventService = {
@@ -73,6 +74,8 @@ export const eventService = {
       queryParams.append("longitude", params.longitude.toString());
     if (params.sortByDistance)
       queryParams.append("sortByDistance", params.sortByDistance);
+    if (params.minParticipants !== undefined)
+      queryParams.append("minParticipants", params.minParticipants.toString());
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/events?${queryParams}`,

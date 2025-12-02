@@ -98,9 +98,9 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
               <SpaceDetailCard space={space} />
             </div>
             <div className="col-12">
-              <Card>
+              <Card className="p-0">
                 <div>
-                  <h2 className="text-xl font-semibold">Ubicación</h2>
+                  <h2 className="text-xl font-semibold mt-0 ">Ubicación</h2>
                   <SpaceMap space={space} />
                 </div>
               </Card>
@@ -108,14 +108,14 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
           </div>
         </div>
         <div className="col-12 md:col-6">
-          <Card style={{ padding: "10px" }}>
-            <div className="flex justify-content-between flex-wrap mb-4">
-              <h2 className="text-xl font-semibold">Próximos eventos</h2>
+          <Card className="p-0 md:p-3">
+            <div className="flex justify-content-between align-items-center mb-3">
+              <h2 className="text-xl font-semibold m-0">Próximos eventos</h2>
               <Button
                 label="Nuevo evento"
                 icon="pi pi-plus"
+                size="small"
                 onClick={() => setShowCreateEventModal(true)}
-                className="ml-4"
               />
             </div>
             <EventsView
@@ -131,7 +131,7 @@ export default function SpaceDetail({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      <div className="col-12">
+      <div className="col-12 p-0">
         <SpaceRatings
           ratings={space.ratings}
           spaceId={params.id}

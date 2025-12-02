@@ -56,6 +56,7 @@ export default function SpaceRatings({
           <Button
             label="Calificar"
             icon="pi pi-star"
+            size="small"
             onClick={() => setShowCreateRatingModal(true)}
           />
         </div>
@@ -108,7 +109,9 @@ export default function SpaceRatings({
                         </div>
                       </div>
                     </div>
-                    <p className={`mt-2`}>{rating.comment || "Sin comentario"}</p>
+                    <p className={`mt-2`}>
+                      {rating.comment || "Sin comentario"}
+                    </p>
                     {rating.user.id === user?.id && (
                       <div className="flex justify-content-end flex-wrap">
                         <Button

@@ -19,7 +19,6 @@ export interface Space extends BaseEntity {
   latitude: number;
   longitude: number;
   isActive: boolean;
-  isAccessible: boolean;
   schedule: string;
   conditions: string;
   description: string;
